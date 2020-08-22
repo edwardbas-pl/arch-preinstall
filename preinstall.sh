@@ -47,6 +47,11 @@ echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
+mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
+mem_multipiler=echo $(($mem_quantity / 4))
+mem=echo $(($mem_multipiler + $mem_quantity))
+
 #Checking if selected disk is unmounted
 umount ${DISK}*
 
@@ -55,9 +60,9 @@ sgdisk -Z ${DISK} # zap all on disk
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
-sgdisk -n 1:0:+1000M ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 3:0:+16G ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 2:0:     ${DISK} # partition 2 (Root), default start, remaining
+sgdisk -n 1:0:+1000M ${DISK}
+sgdisk -n 3:0:+$mem$UNIT ${DISK} 
+sgdisk -n 2:0:     ${DISK} 
 
 BOOT="${DISK}1"
 ROOT="${DISK}2"
