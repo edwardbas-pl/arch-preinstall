@@ -148,9 +148,9 @@ nc=$(grep -c ^processor /proc/cpuinfo)
 echo "You have " $nc" cores."
 echo "-------------------------------------------------"
 echo "Changing the makeflags for "$nc" cores."
-sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j16"/g' /mnt/etc/makepkg.conf
+sed -i "s/#MAKEFLAGS='-j2'/MAKEFLAGS='-j"$nc"'/g" /mnt/etc/makepkg.conf
 echo "Changing the compression settings for "$nc" cores."
-sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 16 -z -)/g' /mnt/etc/makepkg.conf
+sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/makepkg.conf
 
 
 
