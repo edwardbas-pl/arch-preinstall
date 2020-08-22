@@ -54,7 +54,7 @@ mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
 #Checking if selected disk is unmounted
 umount ${DISK}*
-wipefs -fa ${DISK}
+
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
