@@ -157,10 +157,11 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T 16 -z -)/g' /mnt/etc/make
 
 
 echo "Base Networking"
-pacstrap /mnt dhcpcd
+pacstrap /mnt dhcpcd git neofetch
+arch-chroot /mnt git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
 arch-chroot /mnt systemctl enable dhcpcd
 
-exit
+
 
 
 
