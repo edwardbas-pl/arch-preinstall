@@ -49,11 +49,12 @@ echo "--------------------------------------"
 
 mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
-mem_multipiler=$(echo $(($mem_quantity / 4)))
+mem_multipiler=$(echo $(($mem_quantity / 5)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
 #Checking if selected disk is unmounted
 umount ${DISK}*
+wipefs -fa ${DISK}
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
