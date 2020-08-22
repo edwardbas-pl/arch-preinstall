@@ -50,13 +50,15 @@ echo "--------------------------------------"
 #Checking if selected disk is unmounted
 umount ${DISK}*
 
+MEM=$(grep MemTotal /proc/meminfo | awk '{print $2$3}')
+
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
 sgdisk -n 1:0:+1000M ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 3:0:+16G ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
+sgdisk -n 3:0:+$MEM ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
 sgdisk -n 2:0:     ${DISK} # partition 2 (Root), default start, remaining
 
 BOOT="${DISK}1"
