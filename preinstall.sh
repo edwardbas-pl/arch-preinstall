@@ -96,7 +96,7 @@ swapon $SWAP
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo --noconfirm --needed
+pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim nano sudo --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
 
 
@@ -144,8 +144,8 @@ touch /mnt/boot/loader/loader.conf
 echo "default arch-*" > /mnt/boot/loader/loader.conf
 touch /mnt/boot/loader/entries/arch.conf
 echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
-echo "initrd  /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
+echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
 echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
 
 #setting up makepkg flags
