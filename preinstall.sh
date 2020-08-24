@@ -123,17 +123,12 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-echo "Instalator will now install base system and cpu microcode"
-echo "What's MAnufacurer CPU do you have?"
-echo "i) Intel"
-echo "a) AMD"
-echo "n) do not install any CPU microcode"
-read -s CPU
+CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ')
 
-if [ $CPU = i ]
+if [ $CPU = GenuineIntel ]
 then
 	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim intel-ucode --noconfirm --needed
-elif [ $CPU = a ]
+elif [ $CPU = AuthenticAMD ]
 then
 	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim amd-ucode --noconfirm --needed
 else
@@ -190,12 +185,12 @@ touch /mnt/boot/loader/entries/arch.conf
 echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
 
-if [ $CPU = i ]
+if [ $CPU = GenuineIntel ]
 then
 	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
-elif [ $CPU = a ]
+elif [ $CPU = AuthenticAMD ]
 then
 	echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
