@@ -44,11 +44,6 @@ lsblk
 echo "Please enter disk: (example /dev/sda)"
 read DISK
 
-echo "What is your disk format?"
-echo "s) SATA"
-echo "n) NVMe"
-echo "q) I don't know"
-read -s standard
 echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
