@@ -49,7 +49,6 @@ echo "s) SATA"
 echo "n) NVMe"
 echo "q) I don't know"
 read -s standard
-exit 1
 echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
