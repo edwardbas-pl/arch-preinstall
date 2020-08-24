@@ -71,24 +71,19 @@ sgdisk -n 1:0:+1000M ${DISK}
 sgdisk -n 3:0:+$mem$UNIT ${DISK} 
 sgdisk -n 2:0:     ${DISK} 
 
-if [ $standard = n ]
+if [[ ${DISK} == *nvme* ]];
 then
 	echo "your disc standard is nvme"
 
 	BOOT="${DISK}p1"
 	ROOT="${DISK}p2"
 	SWAP="${DISK}p3"
-elif [ $standard = s ]
+else
 then
 	echo "your disc standard is SATA"
 	BOOT="${DISK}1"
 	ROOT="${DISK}2"
 	SWAP="${DISK}3"
-elif [ $standard = q ]
-then
-	echo "you should check your drive type/standard"
-else
-	echo "you chose wrong drive type"
 fi
 BOOT="${DISK}1"
 ROOT="${DISK}2"
