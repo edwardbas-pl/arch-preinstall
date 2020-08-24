@@ -79,10 +79,6 @@ else
 	ROOT="${DISK}2"
 	SWAP="${DISK}3"
 fi
-BOOT="${DISK}1"
-ROOT="${DISK}2"
-SWAP="${DISK}3"
-:
 # set partition types
 sgdisk -t 1:ef00 ${DISK}
 sgdisk -t 2:8300 ${DISK}
