@@ -103,7 +103,7 @@ sgdisk -t 3:8200 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" $BOOT
 sgdisk -c 2:"ROOT" $ROOT
-sgdisk -c 2:"SWAP" $SWAP
+
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
@@ -122,7 +122,25 @@ swapon $SWAP
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim nano sudo --noconfirm --needed
+
+echo "Instalator will now install base system and cpu microcode"
+echo "What's MAnufacurer CPU do you have?"
+echo "i) Intel"
+echo "a) AMD"
+echo "n) do not install any CPU microcode"
+read -s CPU
+
+if [ $CPU = i ]
+then
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim intel-ucode --noconfirm --needed
+elif [ $CPU = a ]
+then
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim amd-ucode --noconfirm --needed
+else
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim --noconfirm --needed
+fi
+	
+
 genfstab -U /mnt >> /mnt/etc/fstab
 
 
@@ -171,8 +189,23 @@ echo "default arch-*" > /mnt/boot/loader/loader.conf
 touch /mnt/boot/loader/entries/arch.conf
 echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
-echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+
+if [ $CPU = i ]
+then
+	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+elif [ $CPU = a ]
+then
+	echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+else
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+fi
+
+
 
 #setting up makepkg flags
 nc=$(grep -c ^processor /proc/cpuinfo)
