@@ -116,6 +116,7 @@ elif [ $CPU = AuthenticAMD ]
 then
 	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim amd-ucode --noconfirm --needed
 else
+	echo "Can't recognize CPU vendor"
 	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim --noconfirm --needed
 fi
 	
