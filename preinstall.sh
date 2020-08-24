@@ -48,9 +48,10 @@ echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
+#This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
 mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
-mem_multipiler=$(echo $(($mem_quantity / 8)))
+mem_multipiler=$(echo $(($mem_quantity / 9)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
 #Checking if selected disk is unmounted
@@ -66,6 +67,7 @@ sgdisk -n 1:0:+1000M ${DISK}
 sgdisk -n 3:0:+$mem$UNIT ${DISK} 
 sgdisk -n 2:0:     ${DISK} 
 
+#This if statement check drive type because nvme partisions ar named with letter p before partiton
 if [[ ${DISK} == *nvme* ]];
 then
 	echo "your disc standard is nvme"
@@ -107,7 +109,7 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ')
+CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
 
 if [ $CPU = GenuineIntel ]
 then
@@ -170,6 +172,8 @@ touch /mnt/boot/loader/entries/arch.conf
 echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
 echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
 
+#This statement chceck witch lines add to bootloader entry
+#It depends on CPU vendor witch was checked previously
 if [ $CPU = GenuineIntel ]
 then
 	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
@@ -202,9 +206,12 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 
 echo "Base Networking"
 pacstrap /mnt dhcpcd git neofetch
-git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
-arch-chroot /mnt chown marcin /mnt/home/$username/arch-postinstall
 arch-chroot /mnt systemctl enable dhcpcd
+
+#This line clone my personal postinstall script
+git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
+
+
 
 
 
