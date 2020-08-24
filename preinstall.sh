@@ -74,7 +74,6 @@ then
 	ROOT="${DISK}p2"
 	SWAP="${DISK}p3"
 else
-then
 	echo "your disc standard is SATA"
 	BOOT="${DISK}1"
 	ROOT="${DISK}2"
