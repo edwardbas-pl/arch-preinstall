@@ -43,6 +43,7 @@ echo "-------------------------------------------------"
 lsblk
 echo "Please enter disk: (example /dev/sda)"
 read DISK
+
 echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
@@ -65,10 +66,19 @@ sgdisk -n 1:0:+1000M ${DISK}
 sgdisk -n 3:0:+$mem$UNIT ${DISK} 
 sgdisk -n 2:0:     ${DISK} 
 
-BOOT="${DISK}1"
-ROOT="${DISK}2"
-SWAP="${DISK}3"
-:
+if [[ ${DISK} == *nvme* ]];
+then
+	echo "your disc standard is nvme"
+
+	BOOT="${DISK}p1"
+	ROOT="${DISK}p2"
+	SWAP="${DISK}p3"
+else
+	echo "your disc standard is SATA"
+	BOOT="${DISK}1"
+	ROOT="${DISK}2"
+	SWAP="${DISK}3"
+fi
 # set partition types
 sgdisk -t 1:ef00 ${DISK}
 sgdisk -t 2:8300 ${DISK}
@@ -77,7 +87,7 @@ sgdisk -t 3:8200 ${DISK}
 # label partitions
 sgdisk -c 1:"UEFISYS" $BOOT
 sgdisk -c 2:"ROOT" $ROOT
-sgdisk -c 2:"SWAP" $SWAP
+
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
@@ -96,7 +106,21 @@ swapon $SWAP
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo --noconfirm --needed
+
+CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ')
+
+if [ $CPU = GenuineIntel ]
+then
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim intel-ucode --noconfirm --needed
+elif [ $CPU = AuthenticAMD ]
+then
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim amd-ucode --noconfirm --needed
+else
+	echo "Can't recognize CPU vendor"
+	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim --noconfirm --needed
+fi
+	
+
 genfstab -U /mnt >> /mnt/etc/fstab
 
 
@@ -144,9 +168,24 @@ touch /mnt/boot/loader/loader.conf
 echo "default arch-*" > /mnt/boot/loader/loader.conf
 touch /mnt/boot/loader/entries/arch.conf
 echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
-echo "initrd  /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
-echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+
+if [ $CPU = GenuineIntel ]
+then
+	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+elif [ $CPU = AuthenticAMD ]
+then
+	echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+else
+	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+fi
+
+
 
 #setting up makepkg flags
 nc=$(grep -c ^processor /proc/cpuinfo)
