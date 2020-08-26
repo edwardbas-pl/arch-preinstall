@@ -136,7 +136,6 @@ arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input $user
 echo "$username:$password" | arch-chroot /mnt chpasswd 
 echo "root:$password" | arch-chroot /mnt chpasswd  
 arch-chroot /mnt usermod -aG wheel,audio,video,optical,storage $username #adding suer to groups
-$username:$password | arch-chroot /mnt chpasswd #Seting password to user
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
 
