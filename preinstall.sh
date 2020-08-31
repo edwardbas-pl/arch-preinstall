@@ -173,20 +173,20 @@ echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
 
 #This statement chceck witch lines add to bootloader entry
 #It depends on CPU vendor witch was checked previously
+
 if [ $CPU = GenuineIntel ]
 then
 	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 elif [ $CPU = AuthenticAMD ]
 then
 	echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
+	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 else
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw" >> /mnt/boot/loader/entries/arch.conf
-fi
+	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 
 
 
