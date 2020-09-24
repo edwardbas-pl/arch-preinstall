@@ -221,3 +221,4 @@ arch-chroot /mnt chown $username /home/$username/arch-postinstall
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR FIRST BOOT    --"
 echo "--------------------------------------"
+exit
