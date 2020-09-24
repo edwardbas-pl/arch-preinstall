@@ -109,7 +109,8 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
+# This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
+CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') 
 
 if [ $CPU = GenuineIntel ]
 then
@@ -187,6 +188,7 @@ then
 else
 	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
 	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+fi
 
 
 
