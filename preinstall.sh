@@ -208,6 +208,8 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 echo "Base Networking"
 pacstrap /mnt dhcpcd git neofetch networkmanager
 arch-chroot /mnt systemctl enable NetworkManager
+arch-chroot /mnt systemctl enable systemd-timesyncd.service
+arch-chroot /mnt timedatectl set-ntp true
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
