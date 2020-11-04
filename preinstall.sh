@@ -66,7 +66,7 @@ echo "--------------------------------------"
 
 # Verify boot mode
 if [[-d "/sys/firmware/efi/efivars"]]
-rhen
+then
 	# create partitions
 	sgdisk -n 1:0:+1000M ${DISK}
 	sgdisk -n 3:0:+$mem$UNIT ${DISK} 
@@ -88,6 +88,8 @@ rhen
 	fi
 	# set partition types
 	sgdisk -t 1:ef00 $BOOT
+	sgdisk -t 2:8300 $ROOT
+	sgdisk -t 3:8200 $SWAP
 	# label partitions
 	sgdisk -c 1:"UEFISYS" $BOOT
 	# make filesystems
@@ -97,7 +99,7 @@ rhen
 	mkswap $SWAP
 	mkdir -p /mnt/boot
 	mount $BOOT /mnt/boot/
-else
+else #if booted in efi mode
 	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
 	sgdisk -n 1:0:     ${DISK} 
 
@@ -112,14 +114,12 @@ else
 		ROOT="${DISK}1"
 		SWAP="${DISK}2"
 	fi
-
+	sgdisk -t 2:8300 $ROOT
+	sgdisk -t 3:8200 $SWAP
 
 
 fi
 # set partition types
-sgdisk -t 2:8300 $ROOT
-sgdisk -t 3:8200 $SWAP
-
 # label partitions
 sgdisk -c 2:"ROOT" $ROOT
 
