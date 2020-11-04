@@ -124,9 +124,6 @@ else	#if booted in legacy mode
 		export SWAP="${DISK}2"
 	fi
 
-	echo "fdisk will began work"
-	echo ${mem}K
-	read cos
 	(
 		echo o
 		echo n
