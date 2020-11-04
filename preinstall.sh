@@ -141,12 +141,7 @@ else	#if booted in legacy mode
 		echo w
 	) | fdisk ${DISK}
 
-	# set partition types
-	sgdisk -t 1:8300 ${DISK}
-	sgdisk -t 2:8200 ${DISK}
 
-	# label partitions
-	sgdisk -c 1:"ROOT" $ROOT
 
 	# make filesystems
 	echo -e "\nCreating Filesystems...\n$HR"
