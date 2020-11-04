@@ -135,6 +135,9 @@ else	#if booted in legacy mode
 		echo p
 		echo
 		echo
+		echo t
+		echo 2
+		echo 82
 		echo w
 	) | fdisk ${DISK}
 	# create partitions
