@@ -139,7 +139,7 @@ else	#if booted in legacy mode
 		echo p
 		echo 2
 		echo
-		echo +${mem}K
+		echo -${mem}K
 		echo t
 		echo 82
 		echo w
