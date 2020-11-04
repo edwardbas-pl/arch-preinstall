@@ -141,7 +141,7 @@ else	#if booted in legacy mode
 		echo w
 	) | fdisk ${DISK}
 
-
+	read cos
 
 	# make filesystems
 	echo -e "\nCreating Filesystems...\n$HR"
