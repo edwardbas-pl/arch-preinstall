@@ -44,16 +44,12 @@ lsblk
 echo "Please enter disk: (example /dev/sda)"
 read DISK
 
-echo "--------------------------------------"
-echo -e "\nFormatting disk...\n$HR"
-echo "--------------------------------------"
-
-#This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
 mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
 mem_multipiler=$(echo $(($mem_quantity / 9)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
+#This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
 #Checking if selected disk is unmounted
 umount ${DISK}*
 
@@ -62,47 +58,76 @@ umount ${DISK}*
 sgdisk -Z ${DISK} # zap all on disk
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
-# create partitions
-sgdisk -n 1:0:+1000M ${DISK}
-sgdisk -n 3:0:+$mem$UNIT ${DISK} 
-sgdisk -n 2:0:     ${DISK} 
+echo "--------------------------------------"
+echo -e "\nFormatting disk...\n$HR"
+echo "--------------------------------------"
 
-#This if statement check drive type because nvme partisions ar named with letter p before partiton
-if [[ ${DISK} == *nvme* ]];
-then
-	echo "your disc standard is nvme"
 
-	BOOT="${DISK}p1"
-	ROOT="${DISK}p2"
-	SWAP="${DISK}p3"
+
+# Verify boot mode
+if [[-d "/sys/firmware/efi/efivars"]]
+rhen
+	# create partitions
+	sgdisk -n 1:0:+1000M ${DISK}
+	sgdisk -n 3:0:+$mem$UNIT ${DISK} 
+	sgdisk -n 2:0:     ${DISK} 
+
+	#This if statement check drive type because nvme partisions ar named with letter p before partiton
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+		BOOT="${DISK}p1"
+		ROOT="${DISK}p2"
+		SWAP="${DISK}p3"
+	else
+		echo "your disc standard is SATA"
+		BOOT="${DISK}1"
+		ROOT="${DISK}2"
+		SWAP="${DISK}3"
+
+	fi
+	# set partition types
+	sgdisk -t 1:ef00 $BOOT
+	# label partitions
+	sgdisk -c 1:"UEFISYS" $BOOT
+	# make filesystems
+	echo -e "\nCreating Filesystems...\n$HR"
+	mkfs.vfat -F32 $BOOT
+	mkfs.ext4 -L "ROOT" $ROOT
+	mkswap $SWAP
+	mkdir -p /mnt/boot
+	mount $BOOT /mnt/boot/
 else
-	echo "your disc standard is SATA"
-	BOOT="${DISK}1"
-	ROOT="${DISK}2"
-	SWAP="${DISK}3"
+	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
+	sgdisk -n 1:0:     ${DISK} 
+
+
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+		ROOT="${DISK}p1"
+		SWAP="${DISK}p2"
+	else
+		echo "your disc standard is SATA"
+		ROOT="${DISK}1"
+		SWAP="${DISK}2"
+	fi
+
+
+
 fi
 # set partition types
-sgdisk -t 1:ef00 ${DISK}
-sgdisk -t 2:8300 ${DISK}
-sgdisk -t 3:8200 ${DISK}
+sgdisk -t 2:8300 $ROOT
+sgdisk -t 3:8200 $SWAP
 
 # label partitions
-sgdisk -c 1:"UEFISYS" $BOOT
 sgdisk -c 2:"ROOT" $ROOT
 
 
-# make filesystems
-echo -e "\nCreating Filesystems...\n$HR"
-
-mkfs.vfat -F32 $BOOT
-mkfs.ext4 -L "ROOT" $ROOT
-mkswap $SWAP
 
 # mount target
 mkdir -p /mnt
 mount $ROOT /mnt
-mkdir -p /mnt/boot
-mount $BOOT /mnt/boot/
 swapon $SWAP
 
 echo "--------------------------------------"
