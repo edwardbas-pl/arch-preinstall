@@ -111,7 +111,7 @@ then
 
 
 else	#if booted in legacy mode
-	echo 'label: gpt' | sfdisk ${DISK}
+	wipefs -fa ${DISK}
 	if [[ ${DISK} == *nvme* ]];
 	then
 		echo "your disc standard is nvme"
@@ -124,23 +124,29 @@ else	#if booted in legacy mode
 		export SWAP="${DISK}2"
 	fi
 
+	echo "fdisk will began work"
+	echo ${mem}K
+	read cos
 	(
 		echo o
 		echo n
 		echo p
 		echo 2
 		echo
-		echo + $mem$unit
-		echo n
-		echo p
-		echo
-		echo
+		echo +${mem}K
 		echo t
-		echo 2
 		echo 82
 		echo w
 	) | fdisk ${DISK}
-
+	(
+		echo n
+		echo p
+		echo 1
+		echo
+		echo
+		echo w
+	) | fdisk ${DISK}
+	exit 1
 	read cos
 
 	# make filesystems
