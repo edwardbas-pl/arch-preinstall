@@ -65,7 +65,7 @@ echo "--------------------------------------"
 
 
 # Verify boot mode
-if [[ -d "/sys/firmware/efi/efivars"]]
+if [[ -d "/sys/firmware/efi/efivars" ]]
 then
 	# create partitions
 	sgdisk -n 1:0:+1000M ${DISK}
