@@ -122,7 +122,6 @@ else	#if booted in legacy mode
 		export SWAP="${DISK}2"
 	fi
 	sgdisk -m ${DISK}
-	export BOOT=${DISK}
 	# create partitions
 	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
 	sgdisk -n 1:0:     ${DISK} 
@@ -246,6 +245,8 @@ else
 	pacstrap /mnt grub
 	arch-chroot /mnt grub-install ${DISK}
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+	echo "grub was installed - please verify"
+	read cos
 fi
 
 
