@@ -140,9 +140,6 @@ else	#if booted in legacy mode
 		echo 82
 		echo w
 	) | fdisk ${DISK}
-	# create partitions
-	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
-	sgdisk -n 1:0:     ${DISK} 
 
 	# set partition types
 	sgdisk -t 1:8300 ${DISK}
