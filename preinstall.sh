@@ -178,7 +178,7 @@ sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
 arch-chroot /mnt timedatectl --no-ask-password set-timezone Europe/Warsaw
 # Set keymaps
-arch -chroot /mnt localectl --no-ask-password set-keymap us
+arch-chroot /mnt localectl --no-ask-password set-keymap us
 
 
     
