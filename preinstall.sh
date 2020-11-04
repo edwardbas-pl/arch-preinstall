@@ -125,6 +125,15 @@ else	#if booted in legacy mode
 	fi
 
 	(
+		echo n
+		echo p
+		echo 1
+		echo
+		echo
+		echo w
+	) | fdisk ${DISK}
+
+	(
 		echo o
 		echo n
 		echo p
@@ -135,15 +144,7 @@ else	#if booted in legacy mode
 		echo 82
 		echo w
 	) | fdisk ${DISK}
-	(
-		echo n
-		echo p
-		echo 1
-		echo
-		echo
-		echo w
-	) | fdisk ${DISK}
-	read cos
+		read cos
 
 	# make filesystems
 	echo -e "\nCreating Filesystems...\n$HR"
