@@ -256,8 +256,6 @@ else
 	pacstrap /mnt grub
 	arch-chroot /mnt grub-install ${DISK}
 	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-	echo "grub was installed - please verify"
-	read cos
 fi
 
 
