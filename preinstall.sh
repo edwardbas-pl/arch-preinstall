@@ -121,6 +121,7 @@ else	#if booted in legacy mode
 		export ROOT="${DISK}1"
 		export SWAP="${DISK}2"
 	fi
+	sgdisk -m ${DISK}
 	export BOOT=${DISK}
 	# create partitions
 	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
