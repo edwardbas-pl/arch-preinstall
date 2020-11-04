@@ -111,7 +111,7 @@ then
 
 
 else	#if booted in legacy mode
-	sgdisk -a 2048 -O ${DISK} # new gpt disk 2048 alignment
+	echo 'label: gpt' | ${DISK}
 	if [[ ${DISK} == *nvme* ]];
 	then
 		echo "your disc standard is nvme"
