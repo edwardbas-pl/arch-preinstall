@@ -271,7 +271,7 @@ arch-chroot /mnt timedatectl set-ntp true
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
-arch-chroot /mnt chown $username /home/$username/arch-postinstall
+arch-chroot /mnt -R chown $username /home/$username/arch-postinstall
 
 
 
