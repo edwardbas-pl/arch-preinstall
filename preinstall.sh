@@ -189,32 +189,37 @@ echo "--------------------------------------"
 echo "-- Bootloader Systemd Installation  --"
 echo "--------------------------------------"
 
-#setting up systemd bootloader entry
-arch-chroot /mnt bootctl --esp-path=/boot install
-touch /mnt/boot/loader/loader.conf
-echo "default arch-*" > /mnt/boot/loader/loader.conf
-touch /mnt/boot/loader/entries/arch.conf
-echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
-echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
-
-#This statement chceck witch lines add to bootloader entry
-#It depends on CPU vendor witch was checked previously
-
-if [ $CPU = GenuineIntel ]
+if [[ -d "/sys/firmware/efi/efivars" ]]
 then
-	echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
-elif [ $CPU = AuthenticAMD ]
-then
-	echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+	#setting up systemd bootloader entry
+	arch-chroot /mnt bootctl --esp-path=/boot install
+	touch /mnt/boot/loader/loader.conf
+	echo "default arch-*" > /mnt/boot/loader/loader.conf
+	touch /mnt/boot/loader/entries/arch.conf
+	echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
+	echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+
+	#This statement chceck witch lines add to bootloader entry
+	#It depends on CPU vendor witch was checked previously
+
+	if [ $CPU = GenuineIntel ]
+	then
+		echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+		echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+		echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+	elif [ $CPU = AuthenticAMD ]
+	then
+		echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+		echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+		echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+	else
+		echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+		echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+	fi
 else
-	echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
-	echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
-fi
-
+	arch-chroot /mnt grub-install ${DISK}
+	arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+fi 
 
 
 #setting up makepkg flags
