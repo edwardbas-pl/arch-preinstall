@@ -81,7 +81,7 @@ then
 	fi
 	# create partitions
 	sgdisk -n 1:0:+1000M ${DISK}
-	sgdisk -n 3:0:+$mem$UNIT ${DISK} 
+	sgdisk -n 3:0:+$mem$unit ${DISK} 
 	sgdisk -n 2:0:     ${DISK} 
 
 	# set partition types
@@ -111,7 +111,7 @@ then
 
 
 else	#if booted in legacy mode
-	echo 'label: gpt' | ${DISK}
+	echo 'label: gpt' | sfdisk ${DISK}
 	if [[ ${DISK} == *nvme* ]];
 	then
 		echo "your disc standard is nvme"
@@ -123,6 +123,20 @@ else	#if booted in legacy mode
 		export ROOT="${DISK}1"
 		export SWAP="${DISK}2"
 	fi
+
+	(
+		echo o
+		echo n
+		echo p
+		echo 2
+		echo
+		echo + $mem$unit
+		echo n
+		echo p
+		echo
+		echo
+		echo w
+	) | fdisk ${DISK}
 	# create partitions
 	sgdisk -n 2:0:+$mem$UNIT ${DISK} 
 	sgdisk -n 1:0:     ${DISK} 
