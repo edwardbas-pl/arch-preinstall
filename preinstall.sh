@@ -143,7 +143,6 @@ else	#if booted in legacy mode
 		echo
 		echo w
 	) | fdisk ${DISK}
-	exit 1
 	read cos
 
 	# make filesystems
