@@ -132,7 +132,8 @@ else	#if booted in legacy mode
 		echo
 		echo -${mem}K
 		echo t
-		echo 82
+		echo 8
+		echo 2
 		echo w
 	) | fdisk ${DISK}
 	(
