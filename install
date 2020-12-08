@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+distro=$( grep -m 1 NAME /etc/os-release )
+
+if [[ ${distro} == *Arch* ]];
+then
+	sh distros/ARCH
+fi
+
+if [[ ${distro} == *Artix* ]];
+then
+
+	sh distros/ARTIX
+fi
+
