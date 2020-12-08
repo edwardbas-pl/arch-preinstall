@@ -187,6 +187,23 @@ fi
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
+#Detecting Installed GPU and installing adequate drivers
+GPU=$(glxinfo | grep "Device")
+if [[ ${GPU} == *Radeon* ]];
+then
+	echo "your GPU vendor is AMD"
+	pacstrap /mnt xf86-video-amdgpu
+fi
+if [[ ${GPU} == *Intel* ]];
+then
+	echo your GPU vendor is Intel
+	pacstrap /mnt xf86-video-intel
+fi
+if [[ ${GPU} == *NV* ]];
+then
+	echo your GPU vendor is NVidia
+	pacstrap /mnt nvidia
+fi
 
 
 echo "--------------------------------------"
