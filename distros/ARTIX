@@ -61,39 +61,103 @@ sgdisk -n 3:0:+$mem$UNIT ${DISK}
 sgdisk -n 2:0:     ${DISK} 
 
 #This if statement check drive type because nvme partisions ar named with letter p before partiton
-if [[ ${DISK} == *nvme* ]];
+if [[ -d "/sys/firmware/efi/efivars" ]]
 then
-	echo "your disc standard is nvme"
-	BOOT="${DISK}p1"
-	ROOT="${DISK}p2"
-	SWAP="${DISK}p3"
-else
-	echo "your disc standard is SATA"
-	BOOT="${DISK}1"
-	ROOT="${DISK}2"
-	SWAP="${DISK}3"
+
+	sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+
+		export BOOT="${DISK}p1"
+		export ROOT="${DISK}p2"
+		export SWAP="${DISK}p3"
+	else
+		echo "your disc standard is SATA"
+		export BOOT="${DISK}1"
+		export ROOT="${DISK}2"
+		export SWAP="${DISK}3"
+	fi
+	# create partitions
+	sgdisk -n 1:0:+1000M ${DISK}
+	sgdisk -n 3:0:+$mem$unit ${DISK} 
+	sgdisk -n 2:0:     ${DISK} 
+
+	# set partition types
+	sgdisk -t 1:ef00 ${DISK}
+	sgdisk -t 2:8300 ${DISK}
+	sgdisk -t 3:8200 ${DISK}
+
+	# label partitions
+	sgdisk -c 1:"UEFISYS" $BOOT
+	sgdisk -c 2:"ROOT" $ROOT
+
+	# make filesystems
+	echo -e "\nCreating Filesystems...\n$HR"
+
+	mkfs.vfat -F32 $BOOT
+	mkfs.ext4 -L "ROOT" $ROOT
+	mkswap $SWAP
+
+	# mount target
+	mkdir -p /mnt
+	mount $ROOT /mnt
+	mkdir -p /mnt/boot
+	mount $BOOT /mnt/boot/
+	swapon $SWAP
+
+
+
+
+else	#if booted in legacy mode
+	wipefs -fa ${DISK}
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+
+		export ROOT="${DISK}p1"
+		export SWAP="${DISK}p2"
+	else
+		echo "your disc standard is SATA"
+		export ROOT="${DISK}1"
+		export SWAP="${DISK}2"
+	fi
+
+	(
+		echo o
+		echo n
+		echo p
+		echo 1
+		echo
+		echo -${mem}K
+		echo t
+		echo 8
+		echo 2
+		echo w
+	) | fdisk ${DISK}
+	(
+		echo n
+		echo p
+		echo 2
+		echo
+		echo
+		echo w
+	) | fdisk ${DISK}
+
+	# make filesystems
+	echo -e "\nCreating Filesystems...\n$HR"
+
+	mkfs.ext4 -L "ROOT" $ROOT
+	mkswap $SWAP
+
+	# mount target
+	mkdir -p /mnt
+	mount $ROOT /mnt
+	swapon $SWAP
+
+
 fi
-# set partition types
-sgdisk -t 1:ef00 ${DISK}
-sgdisk -t 2:8300 ${DISK}
-sgdisk -t 3:8200 ${DISK}
 
-# label partitions
-sgdisk -c 1:"UEFISYS" $BOOT
-sgdisk -c 2:"ROOT" $ROOT
-
-# make filesystems
-echo -e "\nCreating Filesystems...\n$HR"
-mkfs.vfat -F32 $BOOT
-mkfs.ext4 -L "ROOT" $ROOT
-mkswap $SWAP
-
-# mount target
-mkdir -p /mnt
-mount $ROOT /mnt
-mkdir -p /mnt/boot
-mount $BOOT /mnt/boot/
-swapon $SWAP
 
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
@@ -111,6 +175,25 @@ else
 fi
 ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
 fstabgen -U /mnt >> /mnt/etc/fstab
+
+#Detecting Installed GPU and installing adequate drivers
+GPU=$(glxinfo | grep "Device")
+if [[ ${GPU} == *Radeon* ]];
+then
+	echo "your GPU vendor is AMD"
+	basestrap-chroot /mnt xf86-video-amdgpu
+fi
+if [[ ${GPU} == *Intel* ]];
+then
+	echo your GPU vendor is Intel
+	basestrap-chroot /mnt xf86-video-intel
+fi
+if [[ ${GPU} == *NV* ]];
+then
+	echo your GPU vendor is NVidia
+	basestrap-chroot  /mnt nvidia
+fi
+
 
 echo "--------------------------------------"
 echo "-- Preparing users locales and other--"
@@ -139,13 +222,19 @@ artools-chroot /mnt timedatectl --no-ask-password set-timezone Europe/Warsaw
 artools-chroot /mnt localectl --no-ask-password set-keymap us
 
 echo "--------------------------------------"
-echo "-- Bootloader Systemd Installation  --"
+echo "--     Bootloader  Installation     --"
 echo "--------------------------------------"
 
-#setting up systemd bootloader entry
-mkdir /mnt/boot/efi
-artools-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
-artools-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+#setting up grub bootloader 
+if [[ -d "/sys/firmware/efi/efivars" ]]
+then
+	mkdir /mnt/boot/efi
+	artools-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
+	artools-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+else
+	artools-chroot /mnt grub-install ${DISK}
+	artools-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+fi
 
 #setting up makepkg flags
 nc=$(grep -c ^processor /proc/cpuinfo)

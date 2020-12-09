@@ -236,14 +236,14 @@ arch -chroot /mnt localectl --no-ask-password set-keymap us
 
     
 
+echo "--------------------------------------"
+echo "--     Bootloader  Installation     --"
+echo "--------------------------------------"
 
 
 if [[ -d "/sys/firmware/efi/efivars" ]]
 then
 
-	echo "--------------------------------------"
-	echo "-- Bootloader Systemd Installation  --"
-	echo "--------------------------------------"
 
 	#setting up systemd bootloader entry
 	arch-chroot /mnt bootctl --esp-path=/boot install
