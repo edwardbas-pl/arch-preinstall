@@ -229,6 +229,7 @@ echo "127.0.1.1   $hostname.localdomain $hostname" >> /mnt/etc/hosts
 echo "LANG=pl_PL.UTF-8" > /mnt/etc/locale.conf
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
 arch-chroot /mnt locale-gen
+arch-chroot /mnt hwclock --systohc
 arch-chroot /mnt timedatectl --no-ask-password set-timezone Europe/Warsaw
 # Set keymaps
 arch -chroot /mnt localectl --no-ask-password set-keymap us
