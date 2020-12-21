@@ -159,13 +159,6 @@ else	#if booted in legacy mode
 
 fi
 
-
-
-
-
-
-
-
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
