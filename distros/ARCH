@@ -171,17 +171,18 @@ echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
 # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
+
+pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos --noconfirm --needed
 CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') 
 
 if [ $CPU = GenuineIntel ]
 then
-	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim intel-ucode --noconfirm --needed
+	pacstrap /mnt intel-ucode --noconfirm --needed
 elif [ $CPU = AuthenticAMD ]
 then
-	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim amd-ucode --noconfirm --needed
+	pacstrap /mnt amd-ucode --noconfirm --needed
 else
 	echo "Can't recognize CPU vendor"
-	pacstrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim --noconfirm --needed
 fi
 	
 

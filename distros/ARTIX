@@ -162,7 +162,7 @@ fi
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim runit elogind-runit connman-runit connman-gtk grub efibootmgr os-prober --noconfirm --needed
+basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim runit elogind-runit mesa-demos connman-runit connman-gtk grub efibootmgr os-prober --noconfirm --needed
 CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
 if [ $CPU = GenuineIntel ]
 then
@@ -177,6 +177,7 @@ ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default
 fstabgen -U /mnt >> /mnt/etc/fstab
 
 #Detecting Installed GPU and installing adequate drivers
+
 GPU=$(glxinfo | grep "Device")
 if [[ ${GPU} == *Radeon* ]];
 then
