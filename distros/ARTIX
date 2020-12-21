@@ -248,7 +248,7 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 echo "Base Networking"
 basestrap /mnt dhcpcd-runit git neofetch networkmanager networkmanager-runit
 # artools-chroot /mnt systemctl enable NetworkManager
-ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
+basestrap /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall

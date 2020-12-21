@@ -302,10 +302,6 @@ git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/a
 arch-chroot /mnt  chown -R $username /home/$username/arch-postinstall
 
 
-
-
-
-
 #umount -R /mnt
 
 echo "--------------------------------------"
