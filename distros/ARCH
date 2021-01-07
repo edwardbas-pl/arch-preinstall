@@ -33,7 +33,6 @@ mem=$(echo $(($mem_multipiler + $mem_quantity)))
 echo "-------------------------------------------------"
 echo "    Setting up mirrors for optimal download      "
 echo "-------------------------------------------------"
-timedatectl set-ntp true
 pacman -Sy reflector --noconfirm
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
