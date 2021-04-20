@@ -162,7 +162,34 @@ fi
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim runit elogind-runit mesa-demos connman-runit connman-gtk grub efibootmgr os-prober --noconfirm --needed
+
+basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim  mesa-demos grub efibootmgr os-prober --noconfirm --needed
+
+
+basestrap /mnt  git neofetch 
+#select your init system menu
+INIT=$(dialog --clear --title "Select prefered init system" --backtitle "BASH" --radiolist "Optional support for:" 11 40 4  openrc "OPENrc init system" "off" runit "runiti init system" "on" s6 "s6 init system" "off"  --stdout)
+
+if [[ $INIT == *init* ]];
+then
+	basestrap /mnt openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
+	basestrap /mnt rc-update add connmand
+	basestrap /mnt rc-update add NetworkManager 
+
+elif [[ $INIT  == *runit* ]];
+then
+	basestrap /mnt runit elogind-runit connman-runit connman-gtk networkmanager networkmanager-runit dhcpcd-runit
+	ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
+	basestrap /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
+elif [[ $INIT == *s6* ]];
+then
+	basestrap /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
+	basestrap /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
+fi
+
+
+
+
 CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
 if [ $CPU = GenuineIntel ]
 then
@@ -173,7 +200,6 @@ then
 else
 	echo "Can't recognize CPU vendor"
 fi
-ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
 fstabgen -U /mnt >> /mnt/etc/fstab
 
 #Detecting Installed GPU and installing adequate drivers
@@ -247,9 +273,7 @@ echo "Changing the compression settings for "$nc" cores."
 sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/makepkg.conf
 
 echo "Base Networking"
-basestrap /mnt dhcpcd-runit git neofetch networkmanager networkmanager-runit
 # artools-chroot /mnt systemctl enable NetworkManager
-basestrap /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
