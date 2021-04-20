@@ -4,16 +4,11 @@ distro=$( grep -m 1 NAME /etc/os-release )
 sudo pacman -S mesa-demos --noconfirm
 if [[ ${distro} == *Arch* ]];
 then
-	echo "thi is ArchLinux. Press any key"
-	read pause
 	sh distros/ARCH
 fi
 
 if [[ ${distro} == *Artix* ]];
 then
-
-	echo "thi is ARTIX Linux. Press any key"
-	read pause
 	sh distros/ARTIX
 fi
 

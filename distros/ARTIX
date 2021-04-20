@@ -154,13 +154,11 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim  mesa-demos grub efibootmgr os-prober --noconfirm # --needed
+#base system and bootloader install
+basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim git neofetch mesa-demos grub efibootmgr os-prober --noconfirm # --needed
 
-
-basestrap /mnt  git neofetch 
 #select your init system menu
-INIT=$(dialog --clear --title "Select prefered init system" --backtitle "BASH" --radiolist "Optional support for:" 11 40 4  openrc "OpenRC init system" "off" runit "runiti init system" "on" s6 "s6 init system" "off"  --stdout)
-
+INIT=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Select init system to use by your system" 11 40 4  openrc "OpenRC init system" "on" runit "runiti init system" "off" s6 "s6 init system" "off"  --stdout)
 if [[ $INIT == *init* ]];
 then
 	basestrap /mnt openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
@@ -176,10 +174,8 @@ elif [[ $INIT == *s6* ]];
 then
 	artix-chroot /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
 	artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
+	artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
 fi
-
-
-
 
 CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
 if [ $CPU = GenuineIntel ]
@@ -213,7 +209,6 @@ then
 	artix-chroot  /mnt nvidia
 fi
 
-
 echo "--------------------------------------"
 echo "-- Preparing users locales and other--"
 echo "--------------------------------------"
@@ -241,7 +236,7 @@ artix-chroot /mnt hwclock --systohc
 artix-chroot /mnt localectl --no-ask-password set-keymap us
 
 echo "--------------------------------------"
-echo "--     Bootloader  Installation     --"
+echo "--     Bootloader  Configuration    --"
 echo "--------------------------------------"
 
 #setting up grub bootloader 
@@ -272,7 +267,6 @@ git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/a
 artix-chroot /mnt chown $username /home/$username/arch-postinstall
 
 #umount -R /mnt
-
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR FIRST BOOT    --"
 echo "--------------------------------------"
