@@ -28,7 +28,7 @@ echo "    Setting up mirrors for optimal download      "
 echo "-------------------------------------------------"
 
 echo -e "\nInstalling prereqs...\n$HR"
-pacman -S --noconfirm gptfdisk btrfs-progs
+pacman -S --noconfirm gptfdisk btrfs-progs dialog
 
 echo "-------------------------------------------------"
 echo "-------select your disk to format----------------"
