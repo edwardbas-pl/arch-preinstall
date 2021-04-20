@@ -51,7 +51,7 @@ echo $mem
 read pause
 
 #Checking if selected disk is unmounted
-umount ${DISK}*
+umount ${DISK}/*
 
 
 # disk prep
