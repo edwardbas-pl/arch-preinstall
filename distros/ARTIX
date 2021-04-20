@@ -163,7 +163,9 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim  mesa-demos grub efibootmgr os-prober --noconfirm --needed
+basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim  mesa-demos grub efibootmgr os-prober --noconfirm # --needed
+echo "press any key to continue"
+read pause
 
 
 basestrap /mnt  git neofetch 
