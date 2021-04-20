@@ -155,29 +155,27 @@ echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
 basestrap /mnt base base-devel linux-zen linux-firmware linux-zen-headers vim  mesa-demos grub efibootmgr os-prober --noconfirm # --needed
-echo "press any key to continue"
-read pause
 
 
 basestrap /mnt  git neofetch 
 #select your init system menu
-INIT=$(dialog --clear --title "Select prefered init system" --backtitle "BASH" --radiolist "Optional support for:" 11 40 4  openrc "OPENrc init system" "off" runit "runiti init system" "on" s6 "s6 init system" "off"  --stdout)
+INIT=$(dialog --clear --title "Select prefered init system" --backtitle "BASH" --radiolist "Optional support for:" 11 40 4  openrc "OpenRC init system" "off" runit "runiti init system" "on" s6 "s6 init system" "off"  --stdout)
 
 if [[ $INIT == *init* ]];
 then
 	basestrap /mnt openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
-	basestrap /mnt rc-update add connmand
-	basestrap /mnt rc-update add NetworkManager 
+	artix-chroot /mnt rc-update add connmand
+	artix-chroot /mnt rc-update add NetworkManager 
 
 elif [[ $INIT  == *runit* ]];
 then
 	basestrap /mnt runit elogind-runit connman-runit connman-gtk networkmanager networkmanager-runit dhcpcd-runit
 	ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
-	basestrap /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
+	artix-chroot /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
 elif [[ $INIT == *s6* ]];
 then
-	basestrap /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
-	basestrap /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
+	artix-chroot /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
+	artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
 fi
 
 
@@ -198,21 +196,21 @@ fstabgen -U /mnt >> /mnt/etc/fstab
 #Detecting Installed GPU and installing adequate drivers
 
 #this is usless
-GPU=$(glxinfo | grep "Device")
+GPU=$(lshw -c display | grep product)
 if [[ ${GPU} == *Radeon* ]];
 then
 	echo "your GPU vendor is AMD"
-	basestrap-chroot /mnt xf86-video-amdgpu
+	artix-chroot /mnt xf86-video-amdgpu
 fi
 if [[ ${GPU} == *Intel* ]];
 then
 	echo your GPU vendor is Intel
-	basestrap-chroot /mnt xf86-video-intel
+	artix-chroot /mnt xf86-video-intel
 fi
 if [[ ${GPU} == *NV* ]];
 then
 	echo your GPU vendor is NVidia
-	basestrap-chroot  /mnt nvidia
+	artix-chroot  /mnt nvidia
 fi
 
 
