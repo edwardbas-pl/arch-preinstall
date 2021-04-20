@@ -44,15 +44,9 @@ mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
 mem_multipiler=$(echo $(($mem_quantity / 9)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
-echo $mem_quantity
-echo $UNIT
-echo $mem_multipiler
-echo $mem
-read pause
 
 #Checking if selected disk is unmounted
 umount ${DISK}/*
-
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
@@ -66,12 +60,10 @@ sgdisk -n 2:0:     ${DISK}
 #This if statement check drive type because nvme partisions ar named with letter p before partiton
 if [[ -d "/sys/firmware/efi/efivars" ]]
 then
-
 	sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 	if [[ ${DISK} == *nvme* ]];
 	then
 		echo "your disc standard is nvme"
-
 		export BOOT="${DISK}p1"
 		export ROOT="${DISK}p2"
 		export SWAP="${DISK}p3"
@@ -97,7 +89,6 @@ then
 
 	# make filesystems
 	echo -e "\nCreating Filesystems...\n$HR"
-
 	mkfs.vfat -F32 $BOOT
 	mkfs.ext4 -L "ROOT" $ROOT
 	mkswap $SWAP
@@ -109,23 +100,21 @@ then
 	mount $BOOT /mnt/boot/
 	swapon $SWAP
 
-
-
-
 else	#if booted in legacy mode
 	wipefs -fa ${DISK}
-	if [[ ${DISK} == *nvme* ]];
-	then
+	if [[ ${DISK} == *nvme* ]]; #if drive is NVME
+	then 
 		echo "your disc standard is nvme"
 
 		export ROOT="${DISK}p1"
 		export SWAP="${DISK}p2"
-	else
+	else #if drive is SATA
 		echo "your disc standard is SATA"
 		export ROOT="${DISK}1"
 		export SWAP="${DISK}2"
 	fi
 
+	#This blok of instructions creates swap partiotion
 	(
 		echo o
 		echo n
@@ -137,7 +126,9 @@ else	#if booted in legacy mode
 		echo 8
 		echo 2
 		echo w
-	) | fdisk ${DISK}
+	) | fdisk ${DISK} 
+	
+	#This blok of instructions creates root partiotion
 	(
 		echo n
 		echo p
@@ -149,7 +140,6 @@ else	#if booted in legacy mode
 
 	# make filesystems
 	echo -e "\nCreating Filesystems...\n$HR"
-
 	mkfs.ext4 -L "ROOT" $ROOT
 	mkswap $SWAP
 
@@ -157,8 +147,6 @@ else	#if booted in legacy mode
 	mkdir -p /mnt
 	mount $ROOT /mnt
 	swapon $SWAP
-
-
 fi
 
 
@@ -209,6 +197,7 @@ fstabgen -U /mnt >> /mnt/etc/fstab
 
 #Detecting Installed GPU and installing adequate drivers
 
+#this is usless
 GPU=$(glxinfo | grep "Device")
 if [[ ${GPU} == *Radeon* ]];
 then
@@ -232,10 +221,10 @@ echo "-- Preparing users locales and other--"
 echo "--------------------------------------"
 
 #Setting up User
-artools-chroot /mnt useradd -m -G wheel,uucp,video,audio,storage,games,input $username
-echo "$username:$password" | artools-chroot /mnt chpasswd 
-echo "root:$password" | artools-chroot /mnt chpasswd  
-# artools-chroot /mnt usermod -aG wheel,audio,video,optical,storage $username #adding suer to groups
+artix-chroot /mnt useradd -m -G wheel,uucp,video,audio,storage,games,input $username
+echo "$username:$password" | artix-chroot /mnt chpasswd 
+echo "root:$password" | artix-chroot /mnt chpasswd  
+# artix-chroot /mnt usermod -aG wheel,audio,video,optical,storage $username #adding suer to groups
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
 
@@ -248,10 +237,10 @@ echo "127.0.1.1   $hostname.localdomain $hostname" >> /mnt/etc/hosts
 #Setting Locales
 echo "LANG=pl_PL.UTF-8" > /mnt/etc/locale.conf
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
-artools-chroot /mnt locale-gen
-artools-chroot /mnt hwclock --systohc
+artix-chroot /mnt locale-gen
+artix-chroot /mnt hwclock --systohc
 # Set keymaps
-artools-chroot /mnt localectl --no-ask-password set-keymap us
+artix-chroot /mnt localectl --no-ask-password set-keymap us
 
 echo "--------------------------------------"
 echo "--     Bootloader  Installation     --"
@@ -261,11 +250,11 @@ echo "--------------------------------------"
 if [[ -d "/sys/firmware/efi/efivars" ]]
 then
 	mkdir /mnt/boot/efi
-	artools-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
-	artools-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+	artix-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
+	artix-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 else
-	artools-chroot /mnt grub-install ${DISK}
-	artools-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+	artix-chroot /mnt grub-install ${DISK}
+	artix-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
 #setting up makepkg flags
@@ -278,11 +267,11 @@ echo "Changing the compression settings for "$nc" cores."
 sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/makepkg.conf
 
 echo "Base Networking"
-# artools-chroot /mnt systemctl enable NetworkManager
+# artix-chroot /mnt systemctl enable NetworkManager
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
-artools-chroot /mnt chown $username /home/$username/arch-postinstall
+artix-chroot /mnt chown $username /home/$username/arch-postinstall
 
 #umount -R /mnt
 
