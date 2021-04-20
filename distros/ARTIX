@@ -23,9 +23,6 @@ printf "hostname="$hostname"\n" > "install.conf"
 printf "username="$username"\n" > "install.conf"
 printf "password="$password"\n" > "install.conf"
 
-echo "-------------------------------------------------"
-echo "    Setting up mirrors for optimal download      "
-echo "-------------------------------------------------"
 
 echo -e "\nInstalling prereqs...\n$HR"
 pacman -Sy --noconfirm gptfdisk btrfs-progs dialog
@@ -42,10 +39,16 @@ echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
 #This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
+echo "Memory chceck debug"
 mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
 mem_multipiler=$(echo $(($mem_quantity / 9)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
+echo $mem_quantity
+echo $UNIT
+echo $mem_multipiler
+echo $mem
+read pause
 
 #Checking if selected disk is unmounted
 umount ${DISK}*
