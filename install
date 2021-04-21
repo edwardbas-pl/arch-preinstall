@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#this function detect init system in order to enabel tlp service
 function init_detect () {
 	PS=$( ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' )
 	if [[ $PS == *systemd* ]]; 
@@ -25,8 +26,9 @@ function init_detect () {
 		INIT="Error Ocured!"; 
 	fi
 }
+
+#Checks if you are instaling Arch or ARTIX because there are some difrences betwen the two
 distro=$( grep -m 1 NAME /etc/os-release )
-sudo pacman -S mesa-demos --noconfirm
 if [[ ${distro} == *Arch* ]];
 then
 	sh distros/ARCH
@@ -37,16 +39,18 @@ then
 	sh distros/ARTIX
 fi
 
+#chceck if computer is a laptop
 if [[ -f /sys/class/power_supply/BAT0 ]]
 then
 	
-	yay -S tlp tlpui-git dmidecode --noconfirm
+	yay -S tlp tlpui-git dmidecode --noconfirm #install power management software
 
-	device=$(sudo dmidecode -s system-product-name)
+	device=$(sudo dmidecode -s system-product-name) #detect if device is thinkpad 
 
-	if [[ $device == *ThinkPad* ]]
+	if [[ $device == *ThinkPad* ]] #if it is thinkaps it install some aditional software
+
 	then
 		yay -S tp_smapi acpi_call --noconfirm
 	fi
-init_detect
+init_detect #function call
 fi

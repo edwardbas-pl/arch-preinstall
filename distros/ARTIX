@@ -6,6 +6,8 @@
 #   /_/ \_\_| \__|_||_|_|  |_\__,_|\__|_\__|
 #  Artix Linux Post Install Setup and Config
 #-------------------------------------------------------------------------
+
+#Entering Information for new install
 echo "Please enter hostname:"
 read hostname
 echo "Please enter username:"
@@ -14,23 +16,31 @@ echo "Please enter password:"
 read -s password
 echo "Please repeat password:"
 read -s password2
+
 # Check both passwords match
 if [ "$password" != "$password2" ]; then
     echo "Passwords do not match"
     exit 1
 fi
+
 printf "hostname="$hostname"\n" > "install.conf"
 printf "username="$username"\n" > "install.conf"
 printf "password="$password"\n" > "install.conf"
 
 
 echo -e "\nInstalling prereqs...\n$HR"
+
+#install programs neded to perform instalation
 pacman -Sy --noconfirm gptfdisk btrfs-progs dialog
 
 echo "-------------------------------------------------"
 echo "-------select your disk to format----------------"
 echo "-------------------------------------------------"
-lsblk
+
+#list all available drives
+lsblk 
+
+#section to chose drive
 echo "Please enter disk: (example /dev/sda)"
 read DISK
 
@@ -61,6 +71,8 @@ sgdisk -n 2:0:     ${DISK}
 if [[ -d "/sys/firmware/efi/efivars" ]]
 then
 	sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
+
+	#chceck if disk type is NVME or not and create variables to name partiotions
 	if [[ ${DISK} == *nvme* ]];
 	then
 		echo "your disc standard is nvme"

@@ -7,6 +7,7 @@
 #  Arch Linux Post Install Setup and Config
 #-------------------------------------------------------------------------
 
+#Entering Information for new install
 echo "Please enter hostname:"
 read hostname
 echo "Please enter username:"
@@ -20,6 +21,7 @@ if [ "$password" != "$password2" ]; then
     echo "Passwords do not match"
     exit 1
 fi
+
 printf "hostname="$hostname"\n" > "install.conf"
 printf "username="$username"\n" > "install.conf"
 printf "password="$password"\n" > "install.conf"
