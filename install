@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+function init_detect () {
+	PS=$( ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' )
+	if [[ $PS == *systemd* ]]; 
+	then 
+		sudo systemctl enable --now tlp
+		IINIT = "DONE!"
+	elif [[ $PS == *init* ]];
+	then
+		sudo rc-update add tlp
+		sudo rc-service tlp start
+	elif [[ $PS == *runit* ]];
+	then
+
+		ln -s /mnt/etc/runit/sv/tlp /mnt/etc/runit/runsvdir/default	
+		IINIT = "DONE!"
+
+	elif [[ $PS == *s6* ]];
+	then
+		
+		s6-rc-bundle -c /etc/s6/rc/compiled add defaulttlp
+		IINIT = "DONE!"
+	else 
+		INIT="Error Ocured!"; 
+	fi
+}
 distro=$( grep -m 1 NAME /etc/os-release )
 sudo pacman -S mesa-demos --noconfirm
 if [[ ${distro} == *Arch* ]];
@@ -12,3 +37,16 @@ then
 	sh distros/ARTIX
 fi
 
+if [[ -f /sys/class/power_supply/BAT0 ]]
+then
+	
+	yay -S tlp tlpui-git dmidecode --noconfirm
+
+	device=$(sudo dmidecode -s system-product-name)
+
+	if [[ $device == *ThinkPad* ]]
+	then
+		yay -S tp_smapi acpi_call --noconfirm
+	fi
+init_detect
+fi
