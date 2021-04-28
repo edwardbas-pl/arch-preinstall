@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 #this function detect init system in order to enabel tlp service
+sudo pacman -S lshw --noconfirm
 function init_detect () {
 	PS=$( ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' )
 	if [[ $PS == *systemd* ]]; 
