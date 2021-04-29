@@ -345,7 +345,6 @@ $STRAP networkmanager
 if [[ $INIT == *systemd* ]]; 
 then 
 	sudo systemctl enable --now NetworkManager
-	IINIT = "DONE!"
 elif [[ $INIT == *init* ]];
 then
 	$STRAP networkmanager-openrc networkmanager
@@ -356,16 +355,13 @@ then
                                                                          
 	$STRAP networkmanager-runit
 	ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
-	IINIT = "DONE!"
                                                                          
 elif [[ $INIT == *s6* ]];
 then
 	
 	$STRAP networkmanager-s6
 	s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
-	IINIT = "DONE!"
 else 
-	INIT="Error Ocured!"; 
 fi
 
 #This line clone my personal postinstall script
