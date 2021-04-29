@@ -36,21 +36,25 @@ mem=$(echo $(($mem_multipiler + $mem_quantity)))
 distro=$( grep -m 1 NAME /etc/os-release )
 if [[ ${distro} == *Arch* ]];
 then
+	STRAP="pacstrap /mnt"
+	CHROOT="arch-chroot /mnt "
+
+fi
+if [[ ${distro} == *Artix* ]];
+then
+	STRAP="basestrap /mnt"
+	CHROOT="artix-chroot /mnt "
+fi
+
+
+if [[ ${distro} == *Arch* ]];
+then
 	echo "-------------------------------------------------"
 	echo "    Setting up mirrors for optimal download      "
 	echo "-------------------------------------------------"
 	pacman -Sy reflector --noconfirm
 	cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 	reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
-	STRAP="pacstrap /mnt"
-	CHROOT="arch-chroot /mnt "
-
-fi
-
-if [[ ${distro} == *Artix* ]];
-then
-	STRAP="basestrap /mnt"
-	CHROOT="artix-chroot /mnt "
 fi
 
 echo -e "\nInstalling prereqs...\n$HR"
