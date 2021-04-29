@@ -33,6 +33,7 @@ UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
 mem_multipiler=$(echo $(($mem_quantity / 9)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
+distro=$( grep -m 1 NAME /etc/os-release )
 if [[ ${distro} == *Arch* ]];
 then
 	echo "-------------------------------------------------"
