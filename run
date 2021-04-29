@@ -361,7 +361,6 @@ then
 	
 	$STRAP networkmanager-s6
 	s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
-else 
 fi
 
 #This line clone my personal postinstall script
