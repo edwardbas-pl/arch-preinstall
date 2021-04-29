@@ -1,0 +1,358 @@
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------
+#      _          _    __  __      _   _
+#     /_\  _ _ __| |_ |  \/  |__ _| |_(_)__
+#    / _ \| '_/ _| ' \| |\/| / _` |  _| / _|
+#   /_/ \_\_| \__|_||_|_|  |_\__,_|\__|_\__|
+#  Arch Linux Post Install Setup and Config
+#-------------------------------------------------------------------------
+
+
+#Entering Information for new install
+echo "Please enter hostname:"
+read hostname
+echo "Please enter username:"
+read username
+echo "Please enter password:"
+read -s password
+echo "Please repeat password:"
+read -s password2
+# Check both passwords match
+if [ "$password" != "$password2" ]; then
+    echo "Passwords do not match"
+    exit 1
+fi
+
+printf "hostname="$hostname"\n" > "install.conf"
+printf "username="$username"\n" > "install.conf"
+printf "password="$password"\n" > "install.conf"
+
+#This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
+mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
+mem_multipiler=$(echo $(($mem_quantity / 9)))
+mem=$(echo $(($mem_multipiler + $mem_quantity)))
+
+if [[ ${distro} == *Arch* ]];
+then
+	echo "-------------------------------------------------"
+	echo "    Setting up mirrors for optimal download      "
+	echo "-------------------------------------------------"
+	pacman -Sy reflector --noconfirm
+	cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
+	reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
+	STRAP="pacstrap /mnt"
+	CHROOT="arch-chroot /mnt "
+
+fi
+
+if [[ ${distro} == *Artix* ]];
+then
+	STRAP="basestrap /mnt"
+	CHROOT="artix-chroot /mnt "
+fi
+
+echo -e "\nInstalling prereqs...\n$HR"
+pacman -S --noconfirm gptfdisk btrfs-progs
+
+echo "-------------------------------------------------"
+echo "-------select your disk to format----------------"
+echo "-------------------------------------------------"
+lsblk
+echo "Please enter disk: (example /dev/sda)"
+read DISK
+
+echo "--------------------------------------"
+echo -e "\nFormatting disk...\n$HR"
+echo "--------------------------------------"
+
+
+#Checking if selected disk is unmounted
+umount ${DISK}*
+
+# disk prep
+sgdisk -Z ${DISK} # zap all on disk
+
+
+if [[ -d "/sys/firmware/efi/efivars" ]]
+then
+
+	sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+
+		export BOOT="${DISK}p1"
+		export ROOT="${DISK}p2"
+		export SWAP="${DISK}p3"
+	else
+		echo "your disc standard is SATA"
+		export BOOT="${DISK}1"
+		export ROOT="${DISK}2"
+		export SWAP="${DISK}3"
+	fi
+	# create partitions
+	sgdisk -n 1:0:+1000M ${DISK}
+	sgdisk -n 3:0:+$mem$unit ${DISK} 
+	sgdisk -n 2:0:     ${DISK} 
+
+	# set partition types
+	sgdisk -t 1:ef00 ${DISK}
+	sgdisk -t 2:8300 ${DISK}
+	sgdisk -t 3:8200 ${DISK}
+
+	# label partitions
+	sgdisk -c 1:"UEFISYS" $BOOT
+	sgdisk -c 2:"ROOT" $ROOT
+
+	# make filesystems
+	echo -e "\nCreating Filesystems...\n$HR"
+
+	mkfs.vfat -F32 $BOOT
+	mkfs.ext4 -L "ROOT" $ROOT
+	mkswap $SWAP
+
+	# mount target
+	mkdir -p /mnt
+	mount $ROOT /mnt
+	mkdir -p /mnt/boot
+	mount $BOOT /mnt/boot/
+	swapon $SWAP
+
+
+
+
+else	#if booted in legacy mode
+	wipefs -fa ${DISK}
+	if [[ ${DISK} == *nvme* ]];
+	then
+		echo "your disc standard is nvme"
+
+		export ROOT="${DISK}p1"
+		export SWAP="${DISK}p2"
+	else
+		echo "your disc standard is SATA"
+		export ROOT="${DISK}1"
+		export SWAP="${DISK}2"
+	fi
+
+	(
+		echo o
+		echo n
+		echo p
+		echo 1
+		echo
+		echo -${mem}K
+		echo t
+		echo 8
+		echo 2
+		echo w
+	) | fdisk ${DISK}
+	(
+		echo n
+		echo p
+		echo 2
+		echo
+		echo
+		echo w
+	) | fdisk ${DISK}
+
+	# make filesystems
+	echo -e "\nCreating Filesystems...\n$HR"
+
+	mkfs.ext4 -L "ROOT" $ROOT
+	mkswap $SWAP
+
+	# mount target
+	mkdir -p /mnt
+	mount $ROOT /mnt
+	swapon $SWAP
+
+
+fi
+
+echo "--------------------------------------"
+echo "-- Arch Install on Main Drive       --"
+echo "--------------------------------------"
+
+# This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
+
+$STRAP base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos --noconfirm --needed
+CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') 
+if [ $CPU = GenuineIntel ]
+then
+	pacstrap /mnt intel-ucode --noconfirm --needed
+elif [ $CPU = AuthenticAMD ]
+then
+	pacstrap /mnt amd-ucode --noconfirm --needed
+else
+	echo "Can't recognize CPU vendor"
+fi
+	
+
+genfstab -U /mnt >> /mnt/etc/fstab
+
+#this is at this moment worthless
+#Detecting Installed GPU and installing adequate drivers
+GPU=$(glxinfo | grep "Device")
+if [[ ${GPU} == *Radeon* ]];
+then
+	echo "your GPU vendor is AMD"
+	$STRAP xf86-video-amdgpu
+fi
+if [[ ${GPU} == *Intel* ]];
+then
+	echo your GPU vendor is Intel
+	$STRAP xf86-video-intel
+fi
+if [[ ${GPU} == *NV* ]];
+then
+	echo your GPU vendor is NVidia
+	$STRAP nvidia
+fi
+
+echo "--------------------------------------"
+echo "-- Preparing users locales and other--"
+echo "--------------------------------------"
+
+#Setting up User
+$CHROOT useradd -mU -G wheel,uucp,video,audio,storage,games,input $username
+echo "$username:$password" | $CHROOT chpasswd 
+echo "root:$password" | $CHROOT chpasswd  
+$CHROOT usermod -aG wheel,audio,video,optical,storage $username #adding suer to groups
+# Add sudo no password rights
+sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers
+
+#Setting hostname and hosts file
+echo $hostname > /mnt/etc/hostname
+echo "127.0.0.1   localhost" > /mnt/etc/hosts
+echo "::1        	localhost" >> /mnt/etc/hosts
+echo "127.0.1.1   $hostname.localdomain $hostname" >> /mnt/etc/hosts
+
+#setting locale
+echo "LANG=pl_PL.UTF-8" > /mnt/etc/locale.conf
+sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
+arch-chroot /mnt locale-gen
+if [[ ${distro} == *Arch* ]];
+then
+$CHROOT timedatectl set-timezone Europe/Warsaw
+fi
+if [[ ${distro} == *Artix* ]];
+then
+$CHROOT  ln -sf /usr/share/zoneinfo/Poland /etc/localtime
+fi
+arch-chroot /mnt hwclock --systohc
+# Set keymaps
+#CHROOT localectl --no-ask-password set-keymap us
+
+# PS varialbe stores nformation about current init system 
+# I'm using it to detemine witch bootloader to install
+# If its running systemd and computer is booted in efi mode then install systemd boot
+# else install GRUB
+PS=$( ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' )
+if [[ $PS == *systemd* ]]; 
+then 
+	echo "--------------------------------------"
+	echo "--     Bootloader  Installation     --"
+	echo "--------------------------------------"
+
+
+	if [[ -d "/sys/firmware/efi/efivars" ]]
+	then
+
+
+		#setting up systemd bootloader entry
+		$CHROOT bootctl --esp-path=/boot install
+		touch /mnt/boot/loader/loader.conf
+		echo "default arch-*" > /mnt/boot/loader/loader.conf
+		touch /mnt/boot/loader/entries/arch.conf
+		echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
+		echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+
+		#This statement chceck witch lines add to bootloader entry
+		#It depends on CPU vendor witch was checked previously
+
+		if [ $CPU = GenuineIntel ]
+		then
+			echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+		elif [ $CPU = AuthenticAMD ]
+		then
+			echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+		else
+			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
+		fi
+	else
+		$STRAP grub
+		$CHROOT grub-install ${DISK}
+		$CHROOT grub-mkconfig -o /boot/grub/grub.cfg
+	fi
+
+
+else # if not runing systemd install grub 
+	if [[ -d "/sys/firmware/efi/efivars" ]]
+	then
+		mkdir /mnt/boot/efi
+		$CHROOT grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
+		$CHROOT grub-mkconfig -o /boot/grub/grub.cfg
+	else
+		$CHROOT grub-install ${DISK}
+		$CHROOT grub-mkconfig -o /boot/grub/grub.cfg
+	fi
+
+
+fi
+
+#setting up makepkg flags
+nc=$(grep -c ^processor /proc/cpuinfo)
+echo "You have " $nc" cores."
+echo "-------------------------------------------------"
+echo "Changing the makeflags for "$nc" cores."
+sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j'$nc'"/g' /mnt/etc/makepkg.conf
+echo "Changing the compression settings for "$nc" cores."
+sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/makepkg.conf
+
+#Networking enable
+
+$STRAP networkmanager
+if [[ $PS == *systemd* ]]; 
+then 
+	sudo systemctl enable --now NetworkManager
+	IINIT = "DONE!"
+elif [[ $PS == *init* ]];
+then
+	$STRAP networkmanager-openrc
+	sudo rc-update add NetworkManager
+	sudo rc-service NetworkManager start
+elif [[ $PS == *runit* ]];
+then
+                                                                         
+	$STRAP networkmanager-runit
+	ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
+	IINIT = "DONE!"
+                                                                         
+elif [[ $PS == *s6* ]];
+then
+	
+	$STRAP networkmanager-s6
+	s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
+	IINIT = "DONE!"
+else 
+	INIT="Error Ocured!"; 
+fi
+
+#This line clone my personal postinstall script
+git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
+arch-chroot /mnt  chown -R $username /home/$username/arch-postinstall
+
+
+#umount -R /mnt
+
+echo "--------------------------------------"
+echo "--   SYSTEM READY FOR FIRST BOOT    --"
+echo "--------------------------------------"
+exit
