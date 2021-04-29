@@ -171,6 +171,28 @@ else	#if booted in legacy mode
 
 fi
 
+if [[ $distro == *Artix* ]]
+then
+	INIT=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Select init system to use by your system" 11 40 4  openrc "OpenRC init system" "on" runit "runiti init system" "off" s6 "s6 init system" "off"  --stdout)
+	if [[ $INIT == *init* ]];
+	then
+		basestrap /mnt openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
+		artix-chroot /mnt rc-update add connmand
+		artix-chroot /mnt rc-update add NetworkManager 
+
+	elif [[ $INIT  == *runit* ]];
+	then
+		basestrap /mnt runit elogind-runit connman-runit connman-gtk networkmanager networkmanager-runit dhcpcd-runit
+		ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
+		artix-chroot /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
+	elif [[ $INIT == *s6* ]];
+	then
+		artix-chroot /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
+		artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
+		artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
+	fi
+fi
+
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
