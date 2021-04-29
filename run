@@ -183,19 +183,19 @@ then
 	if [[ $INIT == *init* ]];
 	then
 		basestrap /mnt openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
-		artix-chroot /mnt rc-update add connmand
-		artix-chroot /mnt rc-update add NetworkManager 
+		$CHROOT rc-update add connmand
+		$CHROOT rc-update add NetworkManager 
 
 	elif [[ $INIT  == *runit* ]];
 	then
-		basestrap /mnt runit elogind-runit connman-runit connman-gtk networkmanager networkmanager-runit dhcpcd-runit
+		$STRAP runit elogind-runit connman-runit connman-gtk networkmanager networkmanager-runit dhcpcd-runit
 		ln -s /mnt/etc/runit/sv/connmand /mnt/etc/runit/runsvdir/default	
-		artix-chroot /mnt ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
+		$CHROOT ln -s /mnt/etc/runit/sv/NetworkManager /mnt/run/runit/service
 	elif [[ $INIT == *s6* ]];
 	then
-		artix-chroot /mnt s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
-		artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
-		artix-chroot /mnt s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
+		$CHROOT s6 elogind-s6 networkmanager networkmanager-s6 dhcpcd-s6
+		$CHROOT s6-rc-bundle -c /etc/s6/rc/compiled add default connmand
+		$CHROOT s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
 	fi
 fi
 
@@ -260,7 +260,7 @@ echo "127.0.1.1   $hostname.localdomain $hostname" >> /mnt/etc/hosts
 #setting locale
 echo "LANG=pl_PL.UTF-8" > /mnt/etc/locale.conf
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen
-arch-chroot /mnt locale-gen
+$CHROOT locale-gen
 if [[ ${distro} == *Arch* ]];
 then
 $CHROOT timedatectl set-timezone Europe/Warsaw
@@ -269,7 +269,7 @@ if [[ ${distro} == *Artix* ]];
 then
 $CHROOT  ln -sf /usr/share/zoneinfo/Poland /etc/localtime
 fi
-arch-chroot /mnt hwclock --systohc
+$CHROOT hwclock --systohc
 # Set keymaps
 #CHROOT localectl --no-ask-password set-keymap us
 
@@ -370,7 +370,7 @@ fi
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
-arch-chroot /mnt  chown -R $username /home/$username/arch-postinstall
+$CHROOT  chown -R $username /home/$username/arch-postinstall
 
 
 #umount -R /mnt
