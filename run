@@ -342,23 +342,23 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 #Networking enable
 
 $STRAP networkmanager
-if [[ $PS == *systemd* ]]; 
+if [[ $INIT == *systemd* ]]; 
 then 
 	sudo systemctl enable --now NetworkManager
 	IINIT = "DONE!"
-elif [[ $PS == *init* ]];
+elif [[ $INIT == *init* ]];
 then
-	$STRAP networkmanager-openrc
+	$STRAP networkmanager-openrc networkmanager
 	sudo rc-update add NetworkManager
 	sudo rc-service NetworkManager start
-elif [[ $PS == *runit* ]];
+elif [[ $INIT == *runit* ]];
 then
                                                                          
 	$STRAP networkmanager-runit
 	ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
 	IINIT = "DONE!"
                                                                          
-elif [[ $PS == *s6* ]];
+elif [[ $INIT == *s6* ]];
 then
 	
 	$STRAP networkmanager-s6
