@@ -43,15 +43,37 @@ fi
 #chceck if computer is a laptop
 if [[ -f /sys/class/power_supply/BAT0 ]]
 then
-	
-	yay -S tlp tlpui-git dmidecode --noconfirm #install power management software
-
-	device=$(sudo dmidecode -s system-product-name) #detect if device is thinkpad 
-
-	if [[ $device == *ThinkPad* ]] #if it is thinkaps it install some aditional software
-
+	PS=$( ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' )
+	if [[ $PS == *systemd* ]]; 
+	then 
+		basestrap /mnt tlp
+		sudo systemctl enable --now tlp
+		IINIT = "DONE!"
+	elif [[ $PS == *init* ]];
 	then
-		yay -S tp_smapi acpi_call --noconfirm
+		basestrap /mnt tlp tlp-openrc
+		sudo rc-update add tlp
+		sudo rc-service tlp start
+	elif [[ $PS == *runit* ]];
+	then
+		basestrap /mnt tlp tlp-runit
+		ln -s /mnt/etc/runit/sv/tlp /mnt/etc/runit/runsvdir/default	
+		IINIT = "DONE!"
+
+	elif [[ $PS == *s6* ]];
+	then
+		basestrap /mnt tlp tlp-s6
+		s6-rc-bundle -c /etc/s6/rc/compiled add defaulttlp
+		IINIT = "DONE!"
+	else 
+		INIT="Error Ocured!"; 
 	fi
-init_detect #function call
+
+	basestrap /mnt tlpui-git 
+	yay -S dmidecode --noconfirm #install power management software
+	device=$(sudo dmidecode -s system-product-name) #detect if device is thinkpad 
+	if [[ $device == *ThinkPad* ]] #if it is thinkaps it install some aditional software
+	then
+		basestrap /mnt tp_smapi acpi_call
+	fi
 fi
