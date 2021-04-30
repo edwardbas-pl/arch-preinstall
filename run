@@ -322,8 +322,10 @@ then
 
 
 else # if not runing systemd install grub 
+	$STRAP grub
 	if [[ -d "/sys/firmware/efi/efivars" ]]
 	then
+		$STRAP efibootmgr 
 		mkdir /mnt/boot/efi
 		$CHROOT grub-install --target=x86_64-efi --bootloader-id=ARTIX --efi-directory=/boot
 		$CHROOT grub-mkconfig -o /boot/grub/grub.cfg
