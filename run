@@ -222,7 +222,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 #this is at this moment worthless
 #Detecting Installed GPU and installing adequate drivers
-GPU=$(glxinfo | grep "Device")
+GPU=$(lspci | grep -i --color "vga\|3d\|2d")
 if [[ ${GPU} == *Radeon* ]];
 then
 	echo "your GPU vendor is AMD"
