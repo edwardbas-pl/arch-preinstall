@@ -30,7 +30,7 @@ printf "password="$password"\n" > "install.conf"
 #This segment check how much ram do you have instaled in your system and creates little bit bigger swap partition
 mem_quantity=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 UNIT=$(grep MemTotal /proc/meminfo | awk '{print $3}')
-mem_multipiler=$(echo $(($mem_quantity / 9)))
+mem_multipiler=$(echo $(($mem_quantity / 8)))
 mem=$(echo $(($mem_multipiler + $mem_quantity)))
 
 distro=$( grep -m 1 NAME /etc/os-release )
