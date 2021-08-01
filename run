@@ -46,7 +46,6 @@ then
 	CHROOT="artix-chroot /mnt "
 fi
 echo $CHROOT
-read 
 
 if [[ ${distro} == *Arch* ]];
 then
