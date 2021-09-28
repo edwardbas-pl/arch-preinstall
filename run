@@ -350,23 +350,23 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 $STRAP networkmanager
 if [[ $INIT == *systemd* ]]; 
 then 
-	sudo systemctl enable --now NetworkManager
+	$CHROOT sudo systemctl enable --now NetworkManager
 elif [[ $INIT == *init* ]];
 then
-	$STRAP networkmanager-openrc networkmanager
-	sudo rc-update add NetworkManager
-	sudo rc-service NetworkManager start
+	$STRAP networkmanager networkmanager-openrc
+	$CHROOT sudo rc-update add NetworkManager
+	$CHROOT sudo rc-service NetworkManager start
 elif [[ $INIT == *runit* ]];
 then
                                                                          
 	$STRAP networkmanager-runit
-	ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
+	$CHROOT ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
                                                                          
 elif [[ $INIT == *s6* ]];
 then
 	
 	$STRAP networkmanager-s6
-	s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
+	$CHROOT s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
 fi
 
 #This line clone my personal postinstall script
