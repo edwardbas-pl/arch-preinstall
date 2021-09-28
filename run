@@ -348,6 +348,7 @@ fi
 
 
 $STRAP networkmanager
+[[ `systemctl` =~ -\.mount ]] && INIT=systemd
 if [[ $INIT == *systemd* ]]; 
 then 
 	$CHROOT sudo systemctl enable --now NetworkManager
