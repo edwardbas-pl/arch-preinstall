@@ -328,7 +328,7 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 if [[ $distro == *Artix* ]]
 then
 	INIT=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Select init system to use by your system" 11 40 4  openrc "OpenRC init system" "on" runit "runiti init system" "off" s6 "s6 init system" "off"  --stdout)
-	if [[ $INIT == *init* ]];
+	if [[ $INIT == *openrc* ]];
 	then
 		$STRAP openrc elogind-openrc networkmanager networkmanager-openrc dhcpcd-openrc
 		$CHROOT rc-update add connmand
