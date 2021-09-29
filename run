@@ -390,8 +390,8 @@ echo Experimental!!
 if [[ `systemctl` =~ -\.mount ]] 
 then
 	#Experimental Deployment of postinstall script
-	cd /mnt/home/$username
-	arch-chroot -u $username /mnt bash arch-postinstall/install
+	cd /mnt/home/$username/arch-postinstall
+	arch-chroot -u $username /mnt bash install
 fi
 
 
