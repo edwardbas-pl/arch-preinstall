@@ -382,17 +382,15 @@ fi
 
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
+git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/arch-postinstall
 $CHROOT  chown -R $username /home/$username/arch-postinstall
 
 clear
 echo Experimental!!
-echo if you want to run postinstalationscript? (Y/n)
-agree=Y
-read agree
-if [[ $agree == *Y* ]]
+if [[ `systemctl` =~ -\.mount ]] 
 then
 	#Experimental Deployment of postinstall script
-	$CHROOT -u $username /home/$username/arch-postinstall/install
+	arch-chroot -u $username /mnt bash /arch-postinstall/install
 fi
 
 
