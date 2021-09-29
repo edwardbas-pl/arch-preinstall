@@ -394,7 +394,7 @@ then
 	git clone https://aur.archlinux.org/yay-git.git
         cd yay-git
         makepkg -s
-	$CHROOT pacman -U yay-git*.pkg.tar.zst
+	pacstrap -U /mnt yay-git*.pkg.tar.zst
 	arch-chroot -u $username /mnt bash cd /home/$username/arch-postinstall && bash install
 fi
 
