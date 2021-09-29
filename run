@@ -384,9 +384,16 @@ fi
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
 $CHROOT  chown -R $username /home/$username/arch-postinstall
 
-#Experimental Deployment of postinstall script
-$CHROOT -u $username /home/$username/arch-postinstall/install
-
+clear
+echo Experimental!!
+echo if you want to run postinstalationscript? (Y/n)
+agree=Y
+read agree
+if [[ $agree == *Y* ]]
+then
+	#Experimental Deployment of postinstall script
+	$CHROOT -u $username /home/$username/arch-postinstall/install
+fi
 
 
 #umount -R /mnt
