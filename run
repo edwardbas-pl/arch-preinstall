@@ -376,6 +376,93 @@ $CHROOT  chown -R $username /home/$username/arch-postinstall
 
 #umount -R /mnt
 
+POST=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Do you want to install addtional packages? (GUI and custom config)" 11 40 4  yes "Yesi want" "on" no "No I don't" "off" --stdout)
+clear
+if [[ $POST == *yes* ]]
+then
+	clear 
+	echo "instaling additional programs"
+
+	clear
+	echo done
+
+	echo downloading config files
+	git clone https://github.com/edwardbas-pl/backup
+	echo "coying config files"
+	cd backup
+	mkdir -p /mnt/home/$username/.config
+	USER_HOME="/mnt/home/$username"
+	CONFIG="$USER_HOME/.config"
+	CONFIG_PATH=$(pwd)
+
+	$chroot chown $username /home/$username/.config 
+	mkdir -p $CONFIG/ranger
+	mkdir -p $CONFIG/i3
+	mkdir -p $CONFIG/polybar
+	mkdir -p $HOME/.scripts
+	#if on install medi wont be eough space  i should remove wallpapers folder from backup repo
+	mkdir -p $USER_HOME/Pictures
+	mkdir -p $USER_HOME/Pictures/Wallpapers
+	mkdir -p $USER_HOME/.templates
+	mkdir -p $CONFIG/kitty
+	mkdir -p $CONFIG/dunst
+	mkdir -p $CONFIG/picom
+	mkdir -p $CONFIG/gtk-3.0
+	mkdir -p $CONFIG/gtk-4.0
+	mkdir -p $CONFIG/bspwm
+	mkdir -p $CONFIG/sxhkd
+	mkdir -p $CONFIG/dconf
+	mkdir -p $CONFIG/dwm
+
+	mkdir -p /etc/lightdm
+	mkdir -p /usr/share/themes
+	mkdir -p /usr/share/backgrounds
+	mkdir -p /usr/share/icons
+
+	cp -r $CONFIG_PATH/backgrounds/* 	/usr/share/backgrounds
+	cp -r $CONFIG_PATH/backgrounds/* 	~/Pictures/Wallpapers
+	cp -r $CONFIG_PATH/themes/*		/usr/share/themes/
+	cp -r $CONFIG_PATH/icons/*		/usr/share/icons/
+
+	cp $CONFIG_PATH/ranger/*		$CONFIG/ranger/
+	cp $CONFIG_PATH/i3/*			$CONFIG/i3/ 
+	cp $CONFIG_PATH/polybar/*		$CONFIG/polybar
+	cp $CONFIG_PATH/kitty/*			$CONFIG/kitty
+	cp $CONFIG_PATH/dunst/*			$CONFIG/dunst
+	cp $CONFIG_PATH/picom/*			$CONFIG/picom
+	cp $CONFIG_PATH/gtk-3.0/*		$CONFIG/gtk-3.0
+	cp $CONFIG_PATH/gtk-4.0/*		$CONFIG/gtk-4.0
+	cp $CONFIG_PATH/bspwm/*			$CONFIG/bspwm
+	cp $CONFIG_PATH/sxhkd/*			$CONFIG/sxhkd
+	cp $CONFIG_PATH/dconf/*			$CONFIG/dconf
+	cp $CONFIG_PATH/dwm/*			$CONFIG/dwm/
+	sudo cp $CONFIG_PATH/gtk-3.0/*		$CONFIG/gtk-3.0
+	cp -r $CONFIG_PATH/.icons/		$USER_HOME/
+
+
+	cp $CONFIG_PATH/polybar-scripts/*	$USER_HOME/.polybar-scripts/
+	cp $CONFIG_PATH/scripts/*		$USER_HOME/.scripts/
+	cp $CONFIG_PATH/bash_profile		$USER_HOME/.bash_profile
+	cp $CONFIG_PATH/bashrc			$USER_HOME/.bashrc
+	cp $CONFIG_PATH/vimrc			$USER_HOME/.vimrc
+	cp $CONFIG_PATH/profile			$USER_HOME/.profile
+	cp $CONFIG_PATH/xinitrc			$USER_HOME/.xinitrc
+	cp $CONFIG_PATH/gtkrc-2.0		$USER_HOME/.gtkrc-2.0
+	sudo cp $CONFIG_PATH/gtkrc-2.0		$USER_HOME/.gtkrc-2.0
+	cp $CONFIG_PATH/compton.conf		$CONFIG/compton.conf
+	sudo cp $CONFIG_PATH/lightdm/*		/etc/lightdm/
+
+	$CHROOT chown -R /home/$username/*
+	$CHROOT chgrp -R /home/$username/*
+
+	clear
+	echo "DOtfiles copied"
+
+elif [[ $POST == *no* ]]
+then
+	echo "You dont want to do postinstall"
+f
+
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR FIRST BOOT    --"
 echo "--------------------------------------"
