@@ -199,7 +199,7 @@ swap_size =int( ((psutil.virtual_memory().total / 1024) / 1024))
 #chcecking data crucial for installer 
 check_install_path()
 check_hostname()
-check_hostname()
+check_username()
 check_password()
 
 
