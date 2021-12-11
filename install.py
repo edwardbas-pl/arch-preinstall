@@ -58,7 +58,7 @@ def check_install_path():
         install_path = get_install_destination()
     else:
         if path(args.install_path) == True:
-            install_path = args.install_path
+            global install_path = args.install_path
         else:
             print("invalid path.. quiting..")
             quit()
@@ -192,6 +192,7 @@ dist = get_distro()
 BOOT = ""
 ROOT = ""
 SWAP = ""
+install_path = ""
 
 #check ho many ram (in MB) in order to build sufficient swap partition
 swap_size =int( ((psutil.virtual_memory().total / 1024) / 1024))
