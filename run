@@ -456,12 +456,61 @@ then
 	$CHROOT chgrp -R /home/$username/*
 
 	clear
-	echo "DOtfiles copied"
+	#Generating wallpaper list for gnome-settings
+	python << END
+
+import os
+import xml.etree.cElementTree as ET
+workdir = os.getcwd()
+os.chdir('/usr/share/backgrounds')
+root = ET.Element("wallpapers")
+def is_image(image_name):
+    if image_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+        return True
+    else:
+        print(image_name + ' is not supported image. It wil not be included into xml file' )
+        return False
+
+def add_to_xml(filename):
+		wallpaper = ET.SubElement(root, "wallpaper", deleted="false")
+		ET.SubElement(wallpaper, "name").text=filename
+		ET.SubElement(wallpaper, "filename").text=filename
+		ET.SubElement(wallpaper, "options").text='zoom'
+		ET.SubElement(root, "pcolor").text='#ffffff'
+		ET.SubElement(root, "scolor").text='#000000'
+def recursive():
+    ls = os.listdir(os.getcwd())
+    for i in ls:
+        is_dir = os.path.isdir(i)
+        if is_dir == True:
+            dir_before = os.getcwd()
+            os.chdir(dir_before + '/' + i)
+            recursive()
+            os.chdir(dir_before)
+            
+
+        else:
+            dir = (os.getcwd() + '/' + i)
+            print(dir)
+            #is_image(i)
+            #add_to_xml(is_image(i))
+            image = is_image(i)
+            if image == True:
+                add_to_xml(dir)
+
+
+recursive()
+
+tree = ET.ElementTree(root)
+os.chdir(workdir)
+tree.write("gnome-backgrounds.xml")
+END
+echo "DOtfiles copied"
 
 elif [[ $POST == *no* ]]
 then
 	echo "You dont want to do postinstall"
-f
+fi
 
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR FIRST BOOT    --"
