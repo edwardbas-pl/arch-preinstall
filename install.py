@@ -119,10 +119,8 @@ def set_sata_variables(disk):
         SWAP = disk + "2"
 
 def list_disk():
-    drps = psutil.disk_partitions()
-    drives = [dp.device for dp in drps ]
-    for i in drives:
-        print( i )
+    os.system('lsblk --nodeps')
+
 
 def efi_check():
     if os.path.exists("/sys/firmware/efi/efivars") == True:
