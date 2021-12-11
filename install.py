@@ -95,7 +95,7 @@ def nvme_check(path):
     else:
         return False
 
-def set_nvme_disk_variables(disk):
+def set_nvme_variables(disk):
     global BOOT
     global ROOT
     global SWAP
@@ -205,15 +205,11 @@ check_username()
 check_password()
 
 
-if efi_check() == True:
-    if nvme_check(install_path) == True:
-        print("installing on nvme")
-        set_nvme_disk_variables(install_path)
-    else:
-        print("installing on sata")
-        set_sata_variables(install_path)
+if nvme_check(install_path) == True:
+    print("installing on nvme")
+    set_nvme_variables(install_path)
 else:
-    print("non efi system")
+    print("installing on sata")
     set_sata_variables(install_path)
 
 print(ROOT)
