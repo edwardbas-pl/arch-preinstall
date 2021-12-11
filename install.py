@@ -135,7 +135,7 @@ def disk_prep(DISK):
     os.system("sgdisk -Z " + DISK) #zap all on disk
 
 def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
-    os.system("sgdis -a 2048 -o " DISK)
+    os.system("sgdis -a 2048 -o " + DISK)
 
     #creating partiotions
     os.system("sgdisk -n 1:0:+1000M " + DISK)
