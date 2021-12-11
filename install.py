@@ -2,6 +2,7 @@
 import argparse
 import os
 import getpass
+import platform
 
 try:
     import distro
@@ -14,8 +15,9 @@ except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-psutil")
 
 def get_distro():
-    distribution = distro.linux_distribution(full_distribution_name=False)[0]
+    #distribution = distro.linux_distribution(full_distribution_name=False)[0]
     #distro_check(distribution)
+    distribution = distro.id()
     return distribution
 
 def get_install_destination():
