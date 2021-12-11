@@ -15,7 +15,7 @@ except ModuleNotFoundError:
 
 def get_distro():
     distribution = distro.linux_distribution(full_distribution_name=False)[0]
-    distro_check(distribution)
+    #distro_check(distribution)
     return distribution
 
 def get_install_destination():
