@@ -2,9 +2,16 @@
 import argparse
 import os
 import getpass
-import distro
-import psutil
-os.system("pacman -Sy --noconfirm python-distro python-psutil")
+
+try:
+    import distro
+except ModuleNotFoundError:
+    os.system("pacman -Sy --noconfirm python-dstro")
+
+try:
+    import psutil
+except ModuleNotFoundError:
+    os.system("pacman -Sy --noconfirm python-psutil")
 
 def get_distro():
     distribution = distro.linux_distribution(full_distribution_name=False)[0]
