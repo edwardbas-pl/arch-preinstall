@@ -35,8 +35,8 @@ def get_install_destination():
 
 def get_username():
     print("type in username")
-    user = raw_input()
-    return user
+    user = input()
+    return str(user)
 
 def get_hostname():
     print("type hostname")
