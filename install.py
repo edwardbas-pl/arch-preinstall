@@ -4,6 +4,7 @@ import os
 import getpass
 import distro
 import psutil
+os.system("pacman -Sy --noconfirm python-distro python-psutil")
 
 def get_distro():
     distribution = distro.linux_distribution(full_distribution_name=False)[0]
