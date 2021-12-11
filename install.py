@@ -159,7 +159,7 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 
 def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     #creating partitions
-    os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83  ) | fdisk' + DISK + ')
+    os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83  ) | fdisk' + DISK )
     os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdiski ' + DISK + '')
 
     #formating partitions
