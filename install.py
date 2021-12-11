@@ -40,8 +40,8 @@ def get_username():
 
 def get_hostname():
     print("type hostname")
-    host = raw_input("Enter Hostname")
-    return host
+    host = input("Enter Hostname")
+    return str(host)
 
 def get_password():
     first_password = getpass.getpass()
