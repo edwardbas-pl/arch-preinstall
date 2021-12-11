@@ -58,7 +58,7 @@ def check_install_path():
     if args.install_path == None: 
         install_path = get_install_destination()
     else:
-        if path(args.install_path) == True:
+        if path_check(args.install_path) == True:
             install_path = args.install_path
         else:
             print("invalid path.. quiting..")
