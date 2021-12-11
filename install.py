@@ -203,7 +203,7 @@ if efi_check() == True:
         set_sata_variables()
 else:
     print("non efi system")
-        set_sata_variables()
+    set_sata_variables()
 
 print(ROOT)
 print(BOOT)
