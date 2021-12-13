@@ -272,7 +272,7 @@ $CHROOT hwclock --systohc
 # Set keymaps
 #CHROOT localectl --no-ask-password set-keymap us
 
-# PS varialbe stores nformation about current init system 
+# PS varialbe stores information about current init system 
 # I'm using it to detemine witch bootloader to install
 # If its running systemd and computer is booted in efi mode then install systemd boot
 # else install GRUB

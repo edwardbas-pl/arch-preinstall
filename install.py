@@ -3,6 +3,7 @@ import argparse
 import os
 import getpass
 import platform
+import shutil
 
 try:
     import distro
@@ -13,6 +14,9 @@ try:
     import psutil
 except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-psutil")
+
+
+os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
 def get_distro():
     #distribution = distro.linux_distribution(full_distribution_name=False)[0]
@@ -177,8 +181,45 @@ def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
- 
-       
+def set_strap_and_chroot():
+    global STRAP
+    global CHROT
+    if distro_check() == "arch":
+        STRAP = "pacstrap /mnt "
+        CHROOT = "arch-chroot /mnt "
+    elif distro_check() == "artix":
+        STRAP = "basestrap /mnt"
+    	CHROOT = "artix-chroot /mnt "
+
+def mirror_refresh():
+    print("-------------------------------------------------")
+	print("    Setting up mirrors for optimal download      ")
+	print("-------------------------------------------------")
+    os.system("pacman -Sy reflector --noconfirm")
+	shutil.move( "/etc/pacman.d/mirrorlist" , "/etc/pacman.d/mirrorlist.old")
+    os.system( "reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist" )
+
+def cpu_detect():
+    pass
+
+def genfstab():
+    pass
+
+def gpu_detect():
+    pass
+
+def user_setup():
+    pass
+
+def bootlooader():
+    pass
+
+def makepkg_flags():
+    pass
+
+def Networking():
+    pass
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-d", "--destination",dest = "install_path", help="This parameter sets instalation path for Arch")
@@ -194,6 +235,13 @@ BOOT = ""
 ROOT = ""
 SWAP = ""
 install_path = ""
+STRAP = ""
+CHROOT = ""
+set_strap_and_chroot()
+
+if distro_check() == "arch":
+    mirror_refresh()
+
 
 #check ho many ram (in MB) in order to build sufficient swap partition
 swap_size =int( ((psutil.virtual_memory().total / 1024) / 1024))
@@ -204,7 +252,7 @@ check_hostname()
 check_username()
 check_password()
 
-
+ 
 if nvme_check(install_path) == True:
     print("installing on nvme")
     set_nvme_variables(install_path)
@@ -216,6 +264,11 @@ print(ROOT)
 print(BOOT)
 print(SWAP)
 
+
+if efi_check() == True:
+    efi_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
+elif efi_check == False:
+    legacy_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
 
 
 
