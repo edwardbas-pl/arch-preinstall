@@ -4,6 +4,7 @@ import os
 import getpass
 import platform
 import shutil
+import subprocess
 
 try:
     import distro
@@ -139,10 +140,10 @@ def efi_check():
 def distro_check( linux ):
     if linux == 'arch':
         print("installing arch linux")
-        return arch
+        return "arch""
     elif linux == 'artix':
         print('installing Artix Linux')
-        return artix
+        return "artix"
     else:
         print("This installer is not meant to your distro")
         quit()
@@ -203,7 +204,15 @@ def mirror_refresh():
     os.system( "reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist" )
 
 def cpu_detect():
-    pass
+    cpu = subprocess.getoutput([" grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ' "])
+    if "GenuineIntel" in cpu:
+	    print("Intel")
+        return "intel"
+    elif "AuthenticAMD" in cpu:
+	    print("AMD")
+        return "amd"
+    else:
+        print("unknown cpu")
 
 def genfstab():
     os.system( "grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} '")
@@ -218,8 +227,20 @@ def host_settings( hostname ):
    f.add( "127.0.1.1    " + hostname + ".localdomain " + hostname )
    f.close
 
-def gpu_detect():
-    pass
+def gpu_detect( STRAP ):
+    gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
+    #gpu = str(os.system(' lspci | grep -i --color "vga\|3d\|2d'))
+    if "Intel" in gpu:
+	    print("Intel")
+        os.system( STRAP + " xf86-video-intel" )
+    elif "Radeon" in gpu:
+	    print("Print Radeon")
+        os.system( STRAP + " xf86-video-amdgpu" )
+    elif "NV" in gpu:
+	    print("Print Nvidia")
+        os.system( STRAP + " nvidia" )
+    else:
+        print("unknown gpu")
 
 def user_setup( CHROOT , username , password ):
     os.system( CHROOT + " useradd -mU -G wheel,uucp,video, audio,storage,games,input " + username )
@@ -239,8 +260,54 @@ def set_locale(CHROOT):
     os.system( CHROOT + "timedatectl set-timezone Europe/Warsaw" )
     os.system( CHROOT + " hwclock --systohc" )
 
-def bootlooader():
-    pass
+def init_system_check():
+    init = subprocess.getoutput([" ps --pid 1 | grep -q systemd && echo 'systemd' || echo 'init' "])
+    if "systemd" in init:
+        return "systemd"
+    elif "init" in init:
+        return "openrc"
+    elif "runit" in init:
+        return "runit"
+    elif "s6" in init:
+        return "s6"
+
+def systemdboot_insall( CHROOTi , root , swap ):
+    os.system( CHROOT + " bootctl --esp-path=/boot install" )
+    #os.system( " touch /mnt/boot/loader/loader.conf " )
+    f = open( "/mnt/boot/loader/loader.conf" , "w" )
+    f.write( "default   arch-*" )
+    f.close
+    f = open( "/mnt/boot/loader/entries/arch.conf" , "w" )
+    f.write( " title    Arch Linux " )
+    f.write( "linux     /vmlinuz-linux-zen" )
+    if cpu_detect() == "intel":
+        f.write("initrd /intel-ucode.img ")
+    elif cpu_detect() == "amd":
+        f.write("initrd /amd-ucode.img ")
+    f.write( "initrd    /initramfs-linux-zen-img" )
+    f.write( "options root=" + root + " rw resume=" swap )
+    f.close
+
+def grub_legacy( strap , chroot , path ):
+    os.system( strap + " grub" )
+    os.system( chroot + " grub-install " + path )
+    os.system( "grub-mkconfig -o /boot/grub/grub.cfg" )
+
+def grub_efi( strap , chrooot , path ):
+    distro = distro_check()
+    os.system( strap + " grub efibootmgr" )
+    os.mkdir( "/mnt/boot/efi" )
+    os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
+    os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
+
+def bootlooader( strap , chroot , root , swap , path):
+    if efi_check == True:
+        os.system( strap + " efibootmgr" )
+        if distro_check == "arch":
+            systemdboot_install( chroot , root , swap )
+        else: grub_efi( strap ,chroot , path )
+    else:
+        grub_legacy()
 
 def makepkg_flags():
     pass
