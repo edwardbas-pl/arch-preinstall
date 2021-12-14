@@ -69,23 +69,26 @@ def check_install_path():
             quit()
 
 def check_username():
+    global username
     if args.username == None: 
-        install_path = get_username()
+        username = get_username()
     else:
-        install_path = args.username
+        username = args.username
 
 
 def check_hostname():
+    global hostanem
     if args.hostname == None: 
-        install_path = get_hostname()
+        hostname = get_hostname()
     else:
-        install_path = args.hostname
+        hostname = args.hostname
 
 def check_password():
+    global password
     if args.password == None: 
-        install_path = get_password()
+        password = get_password()
     else:
-        install_path = args.password
+        password = args.password
 
 def path_check(path):
     if os.path.exists(path) == True:
@@ -203,13 +206,38 @@ def cpu_detect():
     pass
 
 def genfstab():
-    pass
+    os.system( "grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} '")
+
+def host_settings( hostname ):
+   f = open("/mnt/etc/hostname" , w) 
+   f.add(hostname)
+   f.close
+   f = open("/etc/hosts" , w)
+   f.add( "127.0.0.1    localhost" )
+   f.add( "::1          localhost" )
+   f.add( "127.0.1.1    " + hostname + ".localdomain " + hostname )
+   f.close
 
 def gpu_detect():
     pass
 
-def user_setup():
-    pass
+def user_setup( CHROOT , username , password ):
+    os.system( CHROOT + " useradd -mU -G wheel,uucp,video, audio,storage,games,input " + username )
+    os.system( "echo " + username + ":" + password  + " | " + CHROOT + " chpasswd")
+    os.system( "root:" + password + " | " + CHROOT + " chpasswd" )
+    os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
+    os.system( "sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers" )
+
+def set_locale(CHROOT):
+    f = open( "/mnt/etc/locale.conf" , w )
+    f.add( "LANG=pl_PL.UTF-8" )
+    f.close()
+    os.system( "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen" )
+    os.system( CHROOT + " locale-gen" )
+    #to do:
+    # - distro and init system detect
+    os.system( CHROOT + "timedatectl set-timezone Europe/Warsaw" )
+    os.system( CHROOT + " hwclock --systohc" )
 
 def bootlooader():
     pass
@@ -234,6 +262,9 @@ dist = get_distro()
 BOOT = ""
 ROOT = ""
 SWAP = ""
+username = ""
+hostname = ""
+password = ""
 install_path = ""
 STRAP = ""
 CHROOT = ""

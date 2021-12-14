@@ -439,7 +439,6 @@ then
 	sudo cp $CONFIG_PATH/gtk-3.0/*		$CONFIG/gtk-3.0
 	cp -r $CONFIG_PATH/.icons/		$USER_HOME/
 
-
 	cp $CONFIG_PATH/polybar-scripts/*	$USER_HOME/.polybar-scripts/
 	cp $CONFIG_PATH/scripts/*		$USER_HOME/.scripts/
 	cp $CONFIG_PATH/bash_profile		$USER_HOME/.bash_profile
