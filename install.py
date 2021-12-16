@@ -312,7 +312,7 @@ def bootlooader( strap , chroot , root , swap , path):
 def makepkg_flags():
     pass
 
-def Networking():
+def networking():
     pass
 
 parser = argparse.ArgumentParser()
@@ -367,7 +367,4 @@ if efi_check() == True:
     efi_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
 elif efi_check == False:
     legacy_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
-
-
-
-
+#test comment
