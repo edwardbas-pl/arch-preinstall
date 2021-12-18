@@ -203,10 +203,10 @@ def mirror_refresh():
 def cpu_detect():
     cpu = subprocess.getoutput([" grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ' "])
     if "GenuineIntel" in cpu:
-        cpu = "intel"
-        return cpu
+        CPU = "intel"
+        return CPU
     elif "AuthenticAMD" in cpu:
-        return "amd"
+        return CPU
     else:
         print("unknown cpu")
 
