@@ -194,7 +194,7 @@ def set_strap_and_chroot():
 
 def mirror_refresh():
     print("-------------------------------------------------")
-	print("    Setting up mirrors for optimal download      ")
+    print("    Setting up mirrors for optimal download      ")
 	print("-------------------------------------------------")
     os.system("pacman -Sy reflector --noconfirm")
 	shutil.move( "/etc/pacman.d/mirrorlist" , "/etc/pacman.d/mirrorlist.old")
