@@ -10,12 +10,13 @@ try:
     import distro
 except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-dstro")
+    import distro
 
 try:
     import psutil
 except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-psutil")
-
+    import psutil
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
@@ -27,12 +28,10 @@ def get_distro():
     return distribution
 
 def get_install_destination():
-#    print(os.system("lsblk"))
     list_disk()
     print("Chose where to install Arch")
     path = input()
     if path_check(path) == True:
-        #print(path)
         return str(path)
     else:
         print("invalid path... quiting")
@@ -75,7 +74,6 @@ def check_username():
         username = get_username()
     else:
         username = args.username
-
 
 def check_hostname():
     global hostanem
@@ -129,7 +127,6 @@ def set_sata_variables(disk):
 
 def list_disk():
     os.system('lsblk --nodeps')
-
 
 def efi_check():
     if os.path.exists("/sys/firmware/efi/efivars") == True:
@@ -214,22 +211,24 @@ def cpu_detect():
     else:
         print("unknown cpu")
 
+def base_system_install( strap ):
+    os.system( strap + ' base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos --noconfirm --needed' )
+
 def genfstab():
-    os.system( "grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} '")
+    os.system( "genfstab -U /mnt >> /mnt/etc/fstab")
 
 def host_settings( hostname ):
    f = open("/mnt/etc/hostname" , w) 
    f.add(hostname)
-   f.close
+   f.close()
    f = open("/etc/hosts" , w)
    f.add( "127.0.0.1    localhost" )
    f.add( "::1          localhost" )
    f.add( "127.0.1.1    " + hostname + ".localdomain " + hostname )
-   f.close
+   f.close()
 
 def gpu_detect( STRAP ):
     gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
-    #gpu = str(os.system(' lspci | grep -i --color "vga\|3d\|2d'))
     if "Intel" in gpu:
 	    print("Intel")
         os.system( STRAP + " xf86-video-intel" )
@@ -255,8 +254,6 @@ def set_locale(CHROOT):
     f.close()
     os.system( "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen" )
     os.system( CHROOT + " locale-gen" )
-    #to do:
-    # - distro and init system detect
     os.system( CHROOT + "timedatectl set-timezone Europe/Warsaw" )
     os.system( CHROOT + " hwclock --systohc" )
 
@@ -276,7 +273,7 @@ def systemdboot_insall( CHROOTi , root , swap ):
     #os.system( " touch /mnt/boot/loader/loader.conf " )
     f = open( "/mnt/boot/loader/loader.conf" , "w" )
     f.write( "default   arch-*" )
-    f.close
+    f.close()
     f = open( "/mnt/boot/loader/entries/arch.conf" , "w" )
     f.write( " title    Arch Linux " )
     f.write( "linux     /vmlinuz-linux-zen" )
@@ -286,21 +283,21 @@ def systemdboot_insall( CHROOTi , root , swap ):
         f.write("initrd /amd-ucode.img ")
     f.write( "initrd    /initramfs-linux-zen-img" )
     f.write( "options root=" + root + " rw resume=" swap )
-    f.close
+    f.close()
 
-def grub_legacy( strap , chroot , path ):
+def grub_legacy_instal( strap , chroot , path ):
     os.system( strap + " grub" )
     os.system( chroot + " grub-install " + path )
     os.system( "grub-mkconfig -o /boot/grub/grub.cfg" )
 
-def grub_efi( strap , chrooot , path ):
+def grub_efi_install( strap , chrooot , path ):
     distro = distro_check()
     os.system( strap + " grub efibootmgr" )
     os.mkdir( "/mnt/boot/efi" )
     os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
     os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
-def bootlooader( strap , chroot , root , swap , path):
+def bootlooader_determine( strap , chroot , root , swap , path ):
     if efi_check == True:
         os.system( strap + " efibootmgr" )
         if distro_check == "arch":
@@ -309,8 +306,19 @@ def bootlooader( strap , chroot , root , swap , path):
     else:
         grub_legacy()
 
+def cpu_microcodes_install( strap ):
+    if cpu_detect() == 'intel':
+        os.system( strap + " intel-ucode" )
+    elif cpu_detect() == 'amd'
+        os.system( strap + " amd-ucode" )
+
 def makepkg_flags():
-    pass
+    nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
+    print( "you have " + nc + " cores" )
+    print( "Changing makeflags for " + nc " cores" )
+    os.system( " sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + nc + "/g' /mnt/etc/makepkg.conf" )
+    os.system( "Changing the compression settings for " + nc" + cores" )
+    os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + nc + " -z -)/g' /mnt/etc/makepkg.conf" )
 
 def networking():
     pass
@@ -340,7 +348,6 @@ set_strap_and_chroot()
 if distro_check() == "arch":
     mirror_refresh()
 
-
 #check ho many ram (in MB) in order to build sufficient swap partition
 swap_size =int( ((psutil.virtual_memory().total / 1024) / 1024))
 
@@ -349,7 +356,6 @@ check_install_path()
 check_hostname()
 check_username()
 check_password()
-
  
 if nvme_check(install_path) == True:
     print("installing on nvme")
@@ -358,13 +364,15 @@ else:
     print("installing on sata")
     set_sata_variables(install_path)
 
-print(ROOT)
-print(BOOT)
-print(SWAP)
-
-
 if efi_check() == True:
     efi_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
 elif efi_check == False:
     legacy_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
-#test comment
+
+base_system_install( STRAP )
+cpu_microcodes_install( STRAP ) 
+user_setup( CHROOT , username , password )
+set_locale( CHROOT )
+host_settings( hostname )
+bootlooader_determine( STRAP , CHROOT , ROOT , SWAP , install_path )
+gakepkg_flags()
