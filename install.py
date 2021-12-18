@@ -190,7 +190,7 @@ def set_strap_and_chroot():
         CHROOT = "arch-chroot /mnt "
     elif distro_check() == "artix":
         STRAP = "basestrap /mnt"
-    	CHROOT = "artix-chroot /mnt "
+        CHROOT = "artix-chroot /mnt "
 
 def mirror_refresh():
     print("-------------------------------------------------")
