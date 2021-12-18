@@ -305,7 +305,7 @@ def bootlooader_determine( strap , chroot , root , swap , path ):
 def cpu_microcodes_install( strap ):
     if cpu_detect() == 'intel':
         os.system( strap + " intel-ucode" )
-    elif cpu_detect() == 'amd'
+    elif cpu_detect() == "amd"
         os.system( strap + " amd-ucode" )
 
 def makepkg_flags( chroot ):
