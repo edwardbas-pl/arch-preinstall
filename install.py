@@ -89,19 +89,19 @@ def check_password():
     else:
         password = args.password
 
-def path_check(path):
+def path_check( path ):
     if os.path.exists(path) == True:
         return True
     else:
         return False
 
-def nvme_check(path):
+def nvme_check( path ):
     if "nvme" in path:
         return True
     else:
         return False
 
-def set_nvme_variables(disk):
+def set_nvme_variables( disk ):
     global BOOT
     global ROOT
     global SWAP
@@ -113,7 +113,7 @@ def set_nvme_variables(disk):
         ROOT = disk + "p1"
         SWAP = disk + "p2"
 
-def set_sata_variables(disk):
+def set_sata_variables( disk ):
     global BOOT
     global ROOT
     global SWAP
@@ -134,18 +134,18 @@ def efi_check():
     else:
         return False
 
-def distro_check( linux ):
-    if linux == 'arch':
+def distro_check():
+    if get_distro() == 'arch':
         print("installing arch linux")
         return "arch""
-    elif linux == 'artix':
+    elif get_distro() == 'artix':
         print('installing Artix Linux')
         return "artix"
     else:
         print("This installer is not meant to your distro")
         quit()
 
-def disk_prep(DISK):
+def disk_prep( DISK ):
     os.system("umount " + DISK + "*") #unmounts all partitions of drive
     os.system("sgdisk -Z " + DISK) #zap all on disk
 
@@ -172,7 +172,7 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
-def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
+def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
     #creating partitions
     os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83  ) | fdisk' + DISK )
     os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdiski ' + DISK + '')
@@ -248,7 +248,7 @@ def user_setup( CHROOT , username , password ):
     os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
     os.system( "sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers" )
 
-def set_locale(CHROOT):
+def set_locale( CHROOT ):
     f = open( "/mnt/etc/locale.conf" , w )
     f.add( "LANG=pl_PL.UTF-8" )
     f.close()
