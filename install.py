@@ -204,7 +204,8 @@ def cpu_detect():
     cpu = subprocess.getoutput([" grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ' "])
     if "GenuineIntel" in cpu:
 	    print("Intel")
-        return 'systemd'
+        cpu = "intel"
+        return cpu
     elif "AuthenticAMD" in cpu:
 	    print("AMD")
         return "amd"
