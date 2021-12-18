@@ -282,7 +282,7 @@ def systemdboot_insall( CHROOTi , root , swap ):
     elif cpu_detect() == "amd":
         f.write("initrd /amd-ucode.img ")
     f.write( "initrd    /initramfs-linux-zen-img" )
-    f.write( "options root=" + root + " rw resume=" swap )
+    f.write( "options root=" + root + " rw resume=" + swap )
     f.close()
 
 def grub_legacy_instal( strap , chroot , path ):
@@ -312,13 +312,13 @@ def cpu_microcodes_install( strap ):
     elif cpu_detect() == 'amd'
         os.system( strap + " amd-ucode" )
 
-def makepkg_flags():
+def makepkg_flags( chroot ):
     nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
     print( "you have " + nc + " cores" )
     print( "Changing makeflags for " + nc " cores" )
-    os.system( " sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + nc + "/g' /mnt/etc/makepkg.conf" )
-    os.system( "Changing the compression settings for " + nc" + cores" )
-    os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + nc + " -z -)/g' /mnt/etc/makepkg.conf" )
+    os.system( chroot + " sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + nc + "/g' /mnt/etc/makepkg.conf" )
+    print( "Changing the compression settings for " + nc" + cores" )
+    os.system( chroot + " sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + nc + " -z -)/g' /mnt/etc/makepkg.conf" )
 
 def networking( strap , chroot ):
     os.system( strap + " networkmanager" )
@@ -343,6 +343,7 @@ parser.add_argument("-d", "--destination",dest = "install_path", help="This para
 parser.add_argument("-p", "--password",dest = "password", help="Sets psssword")
 parser.add_argument("-u", "--username",dest = "username", help="Sets username")
 parser.add_argument("-H", "--hostname",dest = "hostname", help="Sets hostname")
+parser.add_argument("-k", "--kernel",dest = "kernel", help="Allows you to choseL Normal, LTS or ZEN kernel")
 
 args = parser.parse_args()
 
@@ -389,5 +390,5 @@ user_setup( CHROOT , username , password )
 set_locale( CHROOT )
 host_settings( hostname )
 bootlooader_determine( STRAP , CHROOT , ROOT , SWAP , install_path )
-gakepkg_flags()
+makepkg_flags()
 networkmanager( STRAP , CHROOT ) 
