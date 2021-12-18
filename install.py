@@ -313,7 +313,7 @@ def makepkg_flags( chroot ):
     print( "you have " + nc + " cores" )
     print( "Changing makeflags for " + nc + " cores" )
     os.system( chroot + " sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + nc + "/g' /mnt/etc/makepkg.conf" )
-    print( "Changing the compression settings for " + nc" + cores" )
+    print( "Changing the compression settings for " + nc + " cores" )
     os.system( chroot + " sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + nc + " -z -)/g' /mnt/etc/makepkg.conf" )
 
 def networking( strap , chroot ):
