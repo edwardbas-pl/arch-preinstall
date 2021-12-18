@@ -320,8 +320,22 @@ def makepkg_flags():
     os.system( "Changing the compression settings for " + nc" + cores" )
     os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + nc + " -z -)/g' /mnt/etc/makepkg.conf" )
 
-def networking():
-    pass
+def networking( strap , chroot ):
+    os.system( strap + " networkmanager" )
+    os.system( strap + " dhcpcd" )
+    if init_system_check() == 'systemd':
+        os.system( chroot + " systemctl enable --now NetworkManager" )
+        os.system( chroot + " systemctl enable --now dhcpd" )
+    elif init_system_check() == 'openrc':
+        os.system( strap + " networkmanager-openrc" )
+        os.system( chroot + " rc-update add NetworkManager" )
+        os.system( chroot + " rc-service NetworkManager start" )
+    elif init_system_check() == 'runit':
+        os.system( strap + " networkmanager-runit" )
+        os.system( chroot + " ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default" )
+    elif init_system_check() == 's6':
+        os.system( strap + " networkmanager-s6" )
+        os.system( chroot + " s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager" )
 
 parser = argparse.ArgumentParser()
 
@@ -376,3 +390,4 @@ set_locale( CHROOT )
 host_settings( hostname )
 bootlooader_determine( STRAP , CHROOT , ROOT , SWAP , install_path )
 gakepkg_flags()
+networkmanager( STRAP , CHROOT ) 

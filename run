@@ -350,23 +350,23 @@ sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T '$nc' -z -)/g' /mnt/etc/m
 $STRAP networkmanager
 if [[ $INIT == *systemd* ]]; 
 then 
-	sudo systemctl enable --now NetworkManager
+	$CHROOT systemctl enable --now NetworkManager
 elif [[ $INIT == *init* ]];
 then
 	$STRAP networkmanager-openrc networkmanager
-	sudo rc-update add NetworkManager
-	sudo rc-service NetworkManager start
+	$CHROOT rc-update add NetworkManager
+	$CHROOT rc-service NetworkManager start
 elif [[ $INIT == *runit* ]];
 then
                                                                          
 	$STRAP networkmanager-runit
-	ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
+	$CHROOT ln -s /mnt/etc/runit/sv/NetworkManager /mnt/etc/runit/runsvdir/default	
                                                                          
 elif [[ $INIT == *s6* ]];
 then
 	
 	$STRAP networkmanager-s6
-	s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
+	$CHROOT s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager
 fi
 
 #This line clone my personal postinstall script
@@ -376,7 +376,7 @@ $CHROOT  chown -R $username /home/$username/arch-postinstall
 
 #umount -R /mnt
 
-POST=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Do you want to install addtional packages? (GUI and custom config)" 11 40 4  yes "Yesi want" "on" no "No I don't" "off" --stdout)
+#POST=$(dialog --clear --title "Init System" --backtitle "BASH" --radiolist "Do you want to install addtional packages? (GUI and custom config)" 11 40 4  yes "Yesi want" "on" no "No I don't" "off" --stdout)
 clear
 if [[ $POST == *yes* ]]
 then
@@ -504,7 +504,7 @@ tree = ET.ElementTree(root)
 os.chdir(workdir)
 tree.write("gnome-backgrounds.xml")
 END
-echo "DOtfiles copied"
+echo "Dotfiles copied"
 
 elif [[ $POST == *no* ]]
 then
