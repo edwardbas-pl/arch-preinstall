@@ -229,13 +229,10 @@ def host_settings( hostname ):
 def gpu_detect( STRAP ):
     gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
     if "Intel" in gpu:
-	    print("Intel")
         os.system( STRAP + " xf86-video-intel" )
     elif "Radeon" in gpu:
-	    print("Print Radeon")
         os.system( STRAP + " xf86-video-amdgpu" )
     elif "NV" in gpu:
-	    print("Print Nvidia")
         os.system( STRAP + " nvidia" )
     else:
         print("unknown gpu")
