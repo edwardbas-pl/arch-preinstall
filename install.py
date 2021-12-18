@@ -206,7 +206,6 @@ def cpu_detect():
         cpu = "intel"
         return cpu
     elif "AuthenticAMD" in cpu:
-	    print("AMD")
         return "amd"
     else:
         print("unknown cpu")
