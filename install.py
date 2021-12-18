@@ -137,7 +137,7 @@ def efi_check():
 def distro_check():
     if get_distro() == 'arch':
         print("installing arch linux")
-        return "arch""
+        return "arch"
     elif get_distro() == 'artix':
         print('installing Artix Linux')
         return "artix"
