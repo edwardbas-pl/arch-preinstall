@@ -20,14 +20,14 @@ import subprocess
 try:
     import distro
 except ModuleNotFoundError:
-    os.system("pacman -Sy --noconfirm python-dstro")
-import distro
+    os.system("pacman -S --noconfirm python-dstro")
+#import distro
 
 try:
     import psutil
 except ModuleNotFoundError:
-    os.system("pacman -Sy --noconfirm python-psutil")
-import psutil
+    os.system("pacman -S --noconfirm python-psutil")
+#import psutil
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
