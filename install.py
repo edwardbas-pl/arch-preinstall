@@ -1,5 +1,16 @@
 #!/bin/python3
 import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-d", "--destination",dest = "install_path", help="This parameter sets instalation path for Arch")
+parser.add_argument("-p", "--password",dest = "password", help="Sets psssword")
+parser.add_argument("-u", "--username",dest = "username", help="Sets username")
+parser.add_argument("-H", "--hostname",dest = "hostname", help="Sets hostname")
+parser.add_argument("-k", "--kernel",dest = "kernel", help="Allows you to choseL Normal, LTS or ZEN kernel")
+
+args = parser.parse_args()
+
 import os
 import getpass
 import platform
@@ -332,16 +343,6 @@ def networking( strap , chroot ):
     elif init_system_check() == 's6':
         os.system( strap + " networkmanager-s6" )
         os.system( chroot + " s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager" )
-
-parser = argparse.ArgumentParser()
-
-parser.add_argument("-d", "--destination",dest = "install_path", help="This parameter sets instalation path for Arch")
-parser.add_argument("-p", "--password",dest = "password", help="Sets psssword")
-parser.add_argument("-u", "--username",dest = "username", help="Sets username")
-parser.add_argument("-H", "--hostname",dest = "hostname", help="Sets hostname")
-parser.add_argument("-k", "--kernel",dest = "kernel", help="Allows you to choseL Normal, LTS or ZEN kernel")
-
-args = parser.parse_args()
 
 #usefull variables 
 dist = get_distro()
