@@ -21,13 +21,13 @@ try:
     import distro
 except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-dstro")
-#    import distro
+import distro
 
 try:
     import psutil
 except ModuleNotFoundError:
     os.system("pacman -Sy --noconfirm python-psutil")
-#    import psutil
+import psutil
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
