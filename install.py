@@ -301,7 +301,7 @@ def bootlooader_determine( strap , chroot , root , swap , path ):
             systemdboot_install( chroot , root , swap )
         else: grub_efi( strap ,chroot , path )
     else:
-        grub_legacy_install()
+        grub_legacy_install( strap , chroot , path )
 
 def cpu_microcodes_install( strap ):
     if cpu_detect() == 'intel':
