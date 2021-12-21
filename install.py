@@ -19,14 +19,14 @@ import subprocess
 
 def pip_install():
     os.system("wget https://bootstrap.pypa.io/get-pip.py -O - | python3")
-
+    pip_install()
+    os.system("pip install psutil")
 
 try:
     import psutil
 except ModuleNotFoundError:
-    pip_install()
-    os.system("pip install psutil")
-    import psutil
+    print("psutil not imported exiting")
+    quit()
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
