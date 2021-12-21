@@ -282,7 +282,7 @@ def systemdboot_insall( CHROOTi , root , swap ):
     f.write( "options root=" + root + " rw resume=" + swap )
     f.close()
 
-def grub_legacy_instal( strap , chroot , path ):
+def grub_legacy_install( strap , chroot , path ):
     os.system( strap + " grub" )
     os.system( chroot + " grub-install " + path )
     os.system( "grub-mkconfig -o /boot/grub/grub.cfg" )
