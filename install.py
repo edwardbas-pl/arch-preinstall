@@ -386,7 +386,6 @@ if efi_check() == True:
 if efi_check() == False:
     print("paritioning disk")
     print(legacy_partitions_set( ROOT , SWAP , install_path , swap_size))
-    mount_legacy(ROOT , SWAP )
 
 print("test")
 print("swap size: " + swap_size)
