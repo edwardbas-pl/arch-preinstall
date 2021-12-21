@@ -21,7 +21,7 @@ try:
     import psutil
 except ModuleNotFoundError:
     os.system("pacman -S --noconfirm python-psutil")
-#import psutil
+    import psutil
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
