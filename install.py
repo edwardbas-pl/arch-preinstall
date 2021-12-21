@@ -145,12 +145,11 @@ def distro_check():
         print("This installer is not meant to your distro")
         quit()
 
-def disk_prep( DISK ):
-    os.system("umount " + DISK + "*") #unmounts all partitions of drive
-    os.system("sgdisk -Z " + DISK) #zap all on disk
 
 def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
-    os.system("sgdis -a 2048 -o " + DISK)
+    os.system("umount " + DISK + "*") #unmounts all partitions of drive
+    os.system("sgdisk -Z " + DISK) #zap all on disk
+    os.system("sgdisk -a 2048 -o " + DISK)
 
     #creating partiotions
     os.system("sgdisk -n 1:0:+1000M " + DISK)
@@ -174,7 +173,8 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 
 def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
     #creating partitions
-    os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83  ) | fdisk ' + DISK )
+    os.system( "wipefs -fa " + DISK )
+    os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83; echo w  ) | fdisk ' + DISK )
     os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk ' + DISK + '')
 
     #formating partitions
