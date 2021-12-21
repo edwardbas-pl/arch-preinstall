@@ -366,7 +366,6 @@ check_hostname()
 check_username()
 check_password()
  
-disk_prep( install_path )
 
 if nvme_check(install_path) == True:
     print("installing on nvme")
