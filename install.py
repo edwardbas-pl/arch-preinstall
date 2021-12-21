@@ -167,7 +167,7 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 
     #formating partitions
     os.system('mkfs,vfat -F32 ' + BOOT)
-    os.system('mkfs.extr4 -L "ROOT" ' + ROOT)
+    os.system('echo y | mkfs.ext4 -L "ROOT" ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
@@ -184,7 +184,7 @@ def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     os.system("( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk " + DISK)
 
     #formating partitions
-    os.system('mkfs.ext4 ' + ROOT)
+    os.system('echo y | mkfs.ext4 ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
