@@ -174,8 +174,8 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
     #creating partitions
     os.system( "wipefs -fa " + DISK )
-    os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83; echo w  ) | fdisk ' + DISK )
-    os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk ' + DISK + '')
+    os.system("( echo o; echo n; echo p; echo 1; echo; echo -" + swap_size + "M; echo t; echo 83; echo w  ) | fdisk " + DISK )
+    os.system("( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk " + DISK)
 
     #formating partitions
     os.system('mkfs.ext4 ' + ROOT)
@@ -384,6 +384,7 @@ elif efi_check == False:
     mount_legacy( BOOT , ROOT , SWAP )
 
 print("test")
+print("swap size: " + swap_size)
 os.system("lsblk")
 print(efi_check())
 input()
