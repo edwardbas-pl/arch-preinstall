@@ -377,6 +377,7 @@ elif efi_check == False:
 
 print("test")
 os.system("lsblk")
+print(efi_check())
 input()
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
