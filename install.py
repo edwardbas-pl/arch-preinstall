@@ -171,6 +171,10 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
+    #mounting partitions
+    os.system("mount /mnt " + ROOT)
+    os.system("mount /mnt/boot " + BOOT)
+
 def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     #creating partitions
     os.system( "wipefs -fa " + DISK )
@@ -184,10 +188,8 @@ def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
-    
-def mount_efi( BOOT , SWAP ):
-    os.system( "mount /mnt " + ROOT )
-    os.system( "mount /mnt/boot " +BROOT )
+    #mounting partitions
+    os.system("mount /mnt " + ROOT)
 
 def set_strap_and_chroot():
     global STRAP
