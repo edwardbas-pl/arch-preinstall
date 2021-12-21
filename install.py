@@ -183,7 +183,7 @@ def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
     os.system('swapon ' + SWAP)
 
     
-def mount_efi( BOOT , SWAP );
+def mount_efi( BOOT , SWAP ):
     os.system( "mount /mnt " + ROOT )
     os.system( "mount /mnt/boot " +BROOT )
 
