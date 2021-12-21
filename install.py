@@ -175,12 +175,17 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
     #creating partitions
     os.system('( echo o; echo n; echo p; echo 1; echo; echo -' + swap_size + 'M; echo t; echo 83  ) | fdisk' + DISK )
-    os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdiski ' + DISK + '')
+    os.system('( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk ' + DISK + '')
 
     #formating partitions
     os.system('mkfs.ext4 ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
+
+    
+def mount_efi( BOOT , SWAP );
+    os.system( "mount /mnt " + ROOT )
+    os.system( "mount /mnt/boot " +BROOT )
 
 def set_strap_and_chroot():
     global STRAP
@@ -373,9 +378,11 @@ else:
 if efi_check() == True:
     print("paritioning disk")
     efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
+    mount_efi( BOOT , SWAP )
 elif efi_check == False:
     print("paritioning disk")
     legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
+    mount_legacy( BOOT , ROOT , SWAP )
 
 print("test")
 os.system("lsblk")
