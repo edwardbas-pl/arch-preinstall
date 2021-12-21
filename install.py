@@ -17,18 +17,6 @@ import platform
 import shutil
 import subprocess
 
-def pip_install():
-    os.system("python3 < <(curl -s https://bootstrap.pypa.io/get-pip.py)")
-    os.system("pip install psutil")
-
-pip_install()
-
-try:
-    import psutil
-except ModuleNotFoundError:
-    print("psutil not imported exiting")
-    quit()
-
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
 def get_distro():
@@ -362,7 +350,9 @@ if distro_check() == "arch":
     mirror_refresh()
 
 #check ho many ram (in MB) in order to build sufficient swap partition
-swap_size =int( ((psutil.virtual_memory().total / 1024) / 1024))
+mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+mem_mega_bytes = mem_bytes/(1024.**2) 
+swap_size =int(mem_mega_bytes)
 
 #chcecking data crucial for installer 
 check_install_path()
