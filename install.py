@@ -353,7 +353,7 @@ if distro_check() == "arch":
 #check ho many ram (in MB) in order to build sufficient swap partition
 mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
 mem_mega_bytes = mem_bytes/(1024.**2) 
-swap_size =int(mem_mega_bytes)
+swap_size =str(int(mem_mega_bytes))
 
 #chcecking data crucial for installer 
 check_install_path()
