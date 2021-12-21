@@ -369,6 +369,7 @@ else:
     set_sata_variables(install_path)
 
 if efi_check() == True:
+    print("paritioning disk")
     efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
 elif efi_check == False:
     legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
