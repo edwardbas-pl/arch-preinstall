@@ -383,7 +383,7 @@ if efi_check() == True:
     print(efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
 elif efi_check() == False:
     print("paritioning disk")
-    print(legacy_partitions_set( ROOT , SWAP , install_path , swap_size))
+    legacy_partitions_set( ROOT , SWAP , install_path , swap_size)
 
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
