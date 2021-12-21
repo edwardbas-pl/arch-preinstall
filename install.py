@@ -18,7 +18,7 @@ import shutil
 import subprocess
 
 def pip_install():
-    os.system("wget https://bootstrap.pypa.io/get-pip.py -O - | python3")
+    os.system("python3 < <(curl -s https://bootstrap.pypa.io/get-pip.py)")
     os.system("pip install psutil")
 
 pip_install()
