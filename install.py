@@ -18,12 +18,6 @@ import shutil
 import subprocess
 
 try:
-    import distro
-except ModuleNotFoundError:
-    os.system("pacman -S --noconfirm python-dstro")
-#import distro
-
-try:
     import psutil
 except ModuleNotFoundError:
     os.system("pacman -S --noconfirm python-psutil")
@@ -32,13 +26,12 @@ except ModuleNotFoundError:
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
 def get_distro():
-    #distribution = distro.linux_distribution(full_distribution_name=False)[0]
-    #distro_check(distribution)
-    #distribution = distro.id()
-    a =  platform.freedesktop_os_release()
-    distribution = a.get("ID")
-    print(distribution)
-    return distribution
+        with open("/etc/issue") as f:
+            a = f.read().lower().split()[0]
+        if "arch" in a:
+            return "arch"
+        elif "artix" in a:
+            return artix
 
 def get_install_destination():
     list_disk()
