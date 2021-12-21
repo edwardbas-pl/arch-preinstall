@@ -381,18 +381,10 @@ else:
 if efi_check() == True:
     print("paritioning disk")
     print(efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
-    mount_efi( BOOT , SWAP )
-
-if efi_check() == False:
+elif efi_check() == False:
     print("paritioning disk")
     print(legacy_partitions_set( ROOT , SWAP , install_path , swap_size))
 
-print("test")
-print("swap size: " + swap_size)
-print("install path: " + install_path)
-os.system("lsblk")
-print(efi_check())
-input()
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
 user_setup( CHROOT , username , password )
