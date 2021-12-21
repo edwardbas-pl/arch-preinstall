@@ -19,8 +19,9 @@ import subprocess
 
 def pip_install():
     os.system("wget https://bootstrap.pypa.io/get-pip.py -O - | python3")
-    pip_install()
     os.system("pip install psutil")
+
+pip_install()
 
 try:
     import psutil
