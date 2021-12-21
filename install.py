@@ -265,7 +265,7 @@ def init_system_check():
     elif "s6" in init:
         return "s6"
 
-def systemdboot_insall( CHROOTi , root , swap ):
+def systemdboot_insall( CHROOT , root , swap ):
     os.system( CHROOT + " bootctl --esp-path=/boot install" )
     #os.system( " touch /mnt/boot/loader/loader.conf " )
     f = open( "/mnt/boot/loader/loader.conf" , "w" )
@@ -374,6 +374,7 @@ elif efi_check == False:
     legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
 
 print("test")
+os.system("lsblk")
 input()
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
