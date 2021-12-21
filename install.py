@@ -321,8 +321,8 @@ def networking( strap , chroot ):
     os.system( strap + " networkmanager" )
     os.system( strap + " dhcpcd" )
     if init_system_check() == 'systemd':
-        os.system( chroot + " systemctl enable --now NetworkManager" )
-        os.system( chroot + " systemctl enable --now dhcpd" )
+        os.system( chroot + " systemctl enable NetworkManager" )
+        os.system( chroot + " systemctl enable dhcpd" )
     elif init_system_check() == 'openrc':
         os.system( strap + " networkmanager-openrc" )
         os.system( chroot + " rc-update add NetworkManager" )
@@ -369,9 +369,9 @@ else:
     set_sata_variables(install_path)
 
 if efi_check() == True:
-    efi_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
+    efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
 elif efi_check == False:
-    legacy_partitions_set(BOOT , ROOT , SWAP , DISK , swap_size)
+    legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
 
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
