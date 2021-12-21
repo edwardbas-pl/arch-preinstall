@@ -171,10 +171,12 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
 
-def legacy_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size ):
+def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     #creating partitions
     os.system( "wipefs -fa " + DISK )
-    os.system("( echo o; echo n; echo p; echo 1; echo; echo -" + swap_size + "M; echo t; echo 83; echo w  ) | fdisk " + DISK )
+    root_partition_steps = "( echo o; echo n; echo p; echo 1; echo; echo -" + swap_size + "M; echo t; echo 83; echo w  ) | fdisk " + DISK 
+    print(root_partition_steps)
+    os.system(root_partition_steps)
     os.system("( echo n; echo p; echo 2; echo; echo; echo w ) | fdisk " + DISK)
 
     #formating partitions
@@ -380,8 +382,8 @@ if efi_check() == True:
     mount_efi( BOOT , SWAP )
 elif efi_check == False:
     print("paritioning disk")
-    print(legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
-    mount_legacy( BOOT , ROOT , SWAP )
+    print(legacy_partitions_set( ROOT , SWAP , install_path , swap_size))
+    mount_legacy(ROOT , SWAP )
 
 print("test")
 print("swap size: " + swap_size)
