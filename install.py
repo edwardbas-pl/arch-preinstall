@@ -385,6 +385,7 @@ elif efi_check == False:
 
 print("test")
 print("swap size: " + swap_size)
+print("install path: " + install_path)
 os.system("lsblk")
 print(efi_check())
 input()
