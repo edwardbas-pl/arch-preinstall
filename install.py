@@ -376,11 +376,11 @@ else:
 
 if efi_check() == True:
     print("paritioning disk")
-    efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
+    print(efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
     mount_efi( BOOT , SWAP )
 elif efi_check == False:
     print("paritioning disk")
-    legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
+    print(legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
     mount_legacy( BOOT , ROOT , SWAP )
 
 print("test")
