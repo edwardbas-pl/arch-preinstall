@@ -218,10 +218,10 @@ def genfstab():
     os.system( "genfstab -U /mnt >> /mnt/etc/fstab")
 
 def host_settings( hostname ):
-   f = open("/mnt/etc/hostname" , w) 
+   f = open("/mnt/etc/hostname" , "w" ) 
    f.add(hostname)
    f.close()
-   f = open("/etc/hosts" , w)
+   f = open("/etc/hosts" , "w" )
    f.add( "127.0.0.1    localhost" )
    f.add( "::1          localhost" )
    f.add( "127.0.1.1    " + hostname + ".localdomain " + hostname )
@@ -246,7 +246,7 @@ def user_setup( CHROOT , username , password ):
     os.system( "sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers" )
 
 def set_locale( CHROOT ):
-    f = open( "/mnt/etc/locale.conf" , w )
+    f = open( "/mnt/etc/locale.conf" , "w" )
     f.add( "LANG=pl_PL.UTF-8" )
     f.close()
     os.system( "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen" )
