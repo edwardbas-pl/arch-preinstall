@@ -7,7 +7,6 @@
 #  Arch Linux Post Install Setup and Config
 #-------------------------------------------------------------------------
 
-
 #Entering Information for new install
 echo "Please enter hostname:"
 read hostname
@@ -71,13 +70,11 @@ echo "--------------------------------------"
 echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
-
 #Checking if selected disk is unmounted
 umount ${DISK}*
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
-
 
 if [[ -d "/sys/firmware/efi/efivars" ]]
 then
@@ -123,10 +120,6 @@ then
 	mkdir -p /mnt/boot
 	mount $BOOT /mnt/boot/
 	swapon $SWAP
-
-
-
-
 else	#if booted in legacy mode
 	wipefs -fa ${DISK}
 	if [[ ${DISK} == *nvme* ]];
@@ -140,7 +133,6 @@ else	#if booted in legacy mode
 		export ROOT="${DISK}1"
 		export SWAP="${DISK}2"
 	fi
-
 	(
 		echo o
 		echo n
@@ -215,7 +207,6 @@ then
 else
 	echo "Can't recognize CPU vendor"
 fi
-	
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -372,7 +363,6 @@ fi
 #This line clone my personal postinstall script
 git clone https://github.com/edwardbas-pl/arch-postinstall /mnt/home/$username/arch-postinstall
 $CHROOT  chown -R $username /home/$username/arch-postinstall
-
 
 #umount -R /mnt
 

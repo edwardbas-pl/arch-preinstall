@@ -34,7 +34,9 @@ os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 def get_distro():
     #distribution = distro.linux_distribution(full_distribution_name=False)[0]
     #distro_check(distribution)
-    distribution = distro.id()
+    #distribution = distro.id()
+    a =  platform.freedesktop_os_release()
+    distribution = a.get("ID")
     print(distribution)
     return distribution
 
