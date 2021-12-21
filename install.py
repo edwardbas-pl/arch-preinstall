@@ -373,6 +373,8 @@ if efi_check() == True:
 elif efi_check == False:
     legacy_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size)
 
+print("test")
+input()
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
 user_setup( CHROOT , username , password )
