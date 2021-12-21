@@ -17,10 +17,14 @@ import platform
 import shutil
 import subprocess
 
+def pip_install():
+    os.system("wget https://bootstrap.pypa.io/get-pip.py -O - | python3")
+
+
 try:
     import psutil
 except ModuleNotFoundError:
-    os.system("pacman -S --noconfirm python-pip")
+    pip_install()
     os.system("pip install psutil")
     import psutil
 
