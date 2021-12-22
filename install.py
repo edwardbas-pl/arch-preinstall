@@ -294,7 +294,7 @@ def systemdboot_insall( CHROOT , root , swap ):
 def grub_legacy_install( strap , chroot , path ):
     os.system( strap + " grub" )
     os.system( chroot + " grub-install " + path )
-    os.system( chroot + "grub-mkconfig -o /boot/grub/grub.cfg" )
+    os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
 def grub_efi_install( strap , chrooot , path ):
     distro = distro_check()
