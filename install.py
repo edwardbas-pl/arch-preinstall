@@ -294,7 +294,7 @@ def systemdboot_insall( CHROOT , root , swap ):
 def grub_legacy_install( strap , chroot , path ):
     os.system( strap + " grub" )
     os.system( chroot + " grub-install " + path )
-    os.system( "grub-mkconfig -o /boot/grub/grub.cfg" )
+    os.system( chroot + "grub-mkconfig -o /boot/grub/grub.cfg" )
 
 def grub_efi_install( strap , chrooot , path ):
     distro = distro_check()
@@ -308,7 +308,8 @@ def bootlooader_determine( strap , chroot , root , swap , path ):
         os.system( strap + " efibootmgr" )
         if distro_check == "arch":
             systemdboot_install( chroot , root , swap )
-        else: grub_efi( strap ,chroot , path )
+        else: 
+            grub_efi( strap ,chroot , path )
     else:
         grub_legacy_install( strap , chroot , path )
 
