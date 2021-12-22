@@ -391,6 +391,17 @@ cpu_microcodes_install( STRAP )
 user_setup( CHROOT , username , password )
 set_locale( CHROOT )
 host_settings( hostname )
+
+
+os.system("clear")
+print("debuging bootloader install section. confirm")
+input()
 bootlooader_determine( STRAP , CHROOT , ROOT , SWAP , install_path )
+print("end of problematic moment. chech")
+input()
+
+
+
+
 makepkg_flags( CHROOT )
 networking( STRAP , CHROOT ) 
