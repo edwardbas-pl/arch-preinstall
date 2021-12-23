@@ -250,7 +250,8 @@ def gpu_detect( STRAP ):
         print("unknown gpu")
 
 def user_setup( CHROOT , username , password ):
-    os.system( CHROOT + " useradd -mU -G wheel,uucp,video, audio,storage,games,input " + username )
+    os.system( CHROOT + " useradd -m " + username )
+    os.system( CHROOT + " usermod -aG wheel,uucp,video,audio,storage,games,input " + username )
     os.system( "echo " + username + ":" + password  + " | " + CHROOT + " chpasswd")
     os.system( "echo 'root:" + password + "' | " + CHROOT + " chpasswd" )
     os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
