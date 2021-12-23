@@ -355,7 +355,6 @@ print("esential info:")
 print("distro: " + distro_check())
 print("chroot: " + CHROOT)
 print("strap: " + STRAP)
-input()
 
 if nvme_check(install_path) == True:
     print("installing on nvme")
@@ -374,14 +373,11 @@ elif efi_check() == False:
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
 user_setup( CHROOT , username , password )
-set_locale( CHROOT )
-host_settings( hostname )
+#set_locale( CHROOT )
+#host_settings( hostname )
 
 
 #os.system("clear")
-print("debuging bootloader install section. confirm")
-input()
-
 if efi_check == True:
     os.system( strap + " efibootmgr" )
     if distro_check() == "arch":
@@ -404,8 +400,5 @@ else:
     os.system( CHROOT + " grub-install " + install_path )
     os.system( CHROOT + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
-print("end of problematic moment. chech")
-input()
-
-makepkg_flags( CHROOT )
-networking( STRAP , CHROOT ) 
+#makepkg_flags( CHROOT )
+#networking( STRAP , CHROOT ) 
