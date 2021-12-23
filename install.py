@@ -304,15 +304,7 @@ def grub_efi_install( strap , chrooot , path ):
     os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
 def bootlooader_determine( strap , chroot , root , swap , path ):
-    if efi_check == True:
-        os.system( strap + " efibootmgr" )
-        if distro_check == "arch":
-            systemdboot_install( chroot , root , swap )
-        else: 
-            grub_efi( strap ,chroot , path )
-    else:
-        grub_legacy_install( strap , chroot , path )
-
+    
 def cpu_microcodes_install( strap ):
     if cpu_detect() == 'intel':
         os.system( strap + " intel-ucode" )
@@ -396,7 +388,16 @@ host_settings( hostname )
 os.system("clear")
 print("debuging bootloader install section. confirm")
 input()
-bootlooader_determine( STRAP , CHROOT , ROOT , SWAP , install_path )
+
+if efi_check == True:
+    os.system( strap + " efibootmgr" )
+    if distro_check == "arch":
+        systemdboot_install( chroot , root , swap )
+    else: 
+        grub_efi( strap ,chroot , path )
+else:
+    grub_legacy_install( strap , chroot , path )
+
 print("end of problematic moment. chech")
 input()
 
