@@ -303,7 +303,7 @@ def grub_efi_install( strap , chrooot , path ):
     os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
     os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
-def bootlooader_determine( strap , chroot , root , swap , path ):
+
     
 def cpu_microcodes_install( strap ):
     if cpu_detect() == 'intel':
