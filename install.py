@@ -170,10 +170,12 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system('echo y | mkfs.ext4 -L "ROOT" ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
-
+    print("mounting partitions")
+    input()
     #mounting partitions
     os.system("mount " + ROOT + "/mnt " )
     os.system("mount " + BOOT + " /mnt/boot ")
+    input()
 
 def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     #creating partitions
