@@ -167,7 +167,7 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 
     #formating partitions
     os.system('mkfs,vfat -F32 ' + BOOT)
-    os.system('echo y | mkfs.ext4 -L "ROOT" ' + ROOT)
+    os.system('mkfs.ext4 -L "ROOT" ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
     print("mounting partitions")
