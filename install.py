@@ -193,7 +193,7 @@ def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
 
 def set_strap_and_chroot():
     global STRAP
-    global CHROT
+    global CHROOT
     if distro_check() == "arch":
         STRAP = "pacstrap /mnt "
         CHROOT = "arch-chroot /mnt "
