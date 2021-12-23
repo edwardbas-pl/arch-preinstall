@@ -397,7 +397,7 @@ if efi_check == True:
         grub_efi( STRAP , CHROOT , install_path )
 else:
     os.system( STRAP + " grub" )
-    os.system( CHROOT + " grub-install " + path )
+    os.system( CHROOT + " grub-install " + install_path )
     os.system( CHROOT + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
 print("end of problematic moment. chech")
