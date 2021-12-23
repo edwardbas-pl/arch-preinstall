@@ -374,7 +374,7 @@ elif efi_check() == False:
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
 user_setup( CHROOT , username , password )
-#host_settings( hostname )
+set_locale( CHROOT )
 
 
 #os.system("clear")
@@ -406,7 +406,7 @@ else:
 os.system("clear")
 print("debug start")
 
-set_locale( CHROOT )
+host_settings( hostname )
 
 print("debug end")
 input
