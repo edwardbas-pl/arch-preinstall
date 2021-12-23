@@ -294,17 +294,10 @@ def systemdboot_insall( CHROOT , root , swap ):
     f.close()
 
 def grub_legacy_install( strap , chroot , path ):
-    os.system( strap + " grub" )
-    os.system( chroot + " grub-install " + path )
-    os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
+
 
 def grub_efi_install( strap , chrooot , path ):
     distro = distro_check()
-    os.system( strap + " grub efibootmgr" )
-    os.mkdir( "/mnt/boot/efi" )
-    os.mkdir("/mnt/boo/efit")
-    os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
-    os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
 
     
@@ -399,12 +392,22 @@ input()
 
 if efi_check == True:
     os.system( strap + " efibootmgr" )
-    if distro_check*() == "arch":
+    if distro_check() == "arch":
         print("installing systemdboot")
-        systemdboot_install( CHROOT , ROOT , SWAP )
+        os.system( strap + " grub" )
+        os.system( chroot + " grub-install " + path )
+        os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
     else: 
-        grub_efi( STRAP , CHROOT , install_path )
-else:
+        #installs grub in efi mode
+        print("instaling grub-efi")
+        os.system( strap + " grub efibootmgr" )
+        os.mkdir( "/mnt/boot/efi" )
+        os.mkdir("/mnt/boo/efit")
+        os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
+        os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
+else: 
+    #installs grub legacy
+    print("installing gru legacy")
     os.system( STRAP + " grub" )
     os.system( CHROOT + " grub-install " + install_path )
     os.system( CHROOT + " grub-mkconfig -o /boot/grub/grub.cfg" )
