@@ -173,7 +173,7 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     print("mounting partitions")
     input()
     #mounting partitions
-    os.system("mount " + ROOT + "/mnt " )
+    os.system("mount " + ROOT + " /mnt " )
     os.system("mount " + BOOT + " /mnt/boot ")
     input()
 
