@@ -222,7 +222,7 @@ def cpu_detect():
         print("unknown cpu")
 
 def base_system_install( strap ):
-    print(instaing base system)
+    print("instaing base system")
     os.system( strap + ' base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos' )
 
 def genfstab():
