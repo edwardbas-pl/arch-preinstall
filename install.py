@@ -363,6 +363,11 @@ check_hostname()
 check_username()
 check_password()
  
+print("esential info:")
+print("distro: " + distro_check())
+print("chroot: " + CHROOT)
+print("strap: " + STRAP)
+input()
 
 if nvme_check(install_path) == True:
     print("installing on nvme")
