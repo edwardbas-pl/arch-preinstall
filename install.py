@@ -302,6 +302,7 @@ def grub_efi_install( strap , chrooot , path ):
     distro = distro_check()
     os.system( strap + " grub efibootmgr" )
     os.mkdir( "/mnt/boot/efi" )
+    os/mkdir("/mnt/boot")
     os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
     os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
 
