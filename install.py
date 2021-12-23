@@ -175,7 +175,6 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system("mount " + ROOT + " /mnt " )
     #os.mkdir("/mnt/boot")
     os.system("mount " + BOOT + " /mnt/boot ")
-    input()
 
 def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     #creating partitions
@@ -392,7 +391,7 @@ set_locale( CHROOT )
 host_settings( hostname )
 
 
-os.system("clear")
+#os.system("clear")
 print("debuging bootloader install section. confirm")
 input()
 
