@@ -398,6 +398,7 @@ input()
 if efi_check == True:
     os.system( strap + " efibootmgr" )
     if distro_check == "arch":
+        print("installing systemdboot")
         systemdboot_install( CHROOT , ROOT , SWAP )
     else: 
         grub_efi( STRAP , CHROOT , install_path )
