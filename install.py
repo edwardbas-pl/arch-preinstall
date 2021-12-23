@@ -337,8 +337,8 @@ STRAP = ""
 CHROOT = ""
 set_strap_and_chroot()
 
-#if distro_check() == "arch":
-    #mirror_refresh()
+if distro_check() == "arch":
+    mirror_refresh()
 
 #check ho many ram (in MB) in order to build sufficient swap partition
 mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
@@ -406,9 +406,6 @@ else:
 
 print("end of problematic moment. chech")
 input()
-
-
-
 
 makepkg_flags( CHROOT )
 networking( STRAP , CHROOT ) 
