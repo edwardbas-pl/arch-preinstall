@@ -392,11 +392,11 @@ input()
 if efi_check == True:
     os.system( strap + " efibootmgr" )
     if distro_check == "arch":
-        systemdboot_install( chroot , root , swap )
+        systemdboot_install( CHROOT , ROOT , SWAP )
     else: 
-        grub_efi( strap ,chroot , path )
+        grub_efi( STRAP , CHROOT , install_path )
 else:
-    grub_legacy_install( strap , chroot , path )
+    grub_legacy_install( STRAP , CHROOT , install_path )
 
 print("end of problematic moment. chech")
 input()
