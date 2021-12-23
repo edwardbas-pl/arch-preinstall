@@ -372,7 +372,6 @@ elif efi_check() == False:
 
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
-user_setup( CHROOT , username , password )
 #set_locale( CHROOT )
 #host_settings( hostname )
 
@@ -402,3 +401,9 @@ else:
 
 #makepkg_flags( CHROOT )
 #networking( STRAP , CHROOT ) 
+
+os.system("clear")
+print("debug start")
+user_setup( CHROOT , username , password )
+print("debug end")
+input
