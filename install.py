@@ -293,14 +293,6 @@ def systemdboot_insall( CHROOT , root , swap ):
     f.write( "options root=" + root + " rw resume=" + swap )
     f.close()
 
-def grub_legacy_install( strap , chroot , path ):
-
-
-def grub_efi_install( strap , chrooot , path ):
-    distro = distro_check()
-
-
-    
 def cpu_microcodes_install( strap ):
     if cpu_detect() == 'intel':
         os.system( strap + " intel-ucode" )
