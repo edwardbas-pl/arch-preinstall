@@ -234,8 +234,11 @@ def host_settings( hostname ):
    f.close()
    f = open("/etc/hosts" , "w" )
    f.write( "127.0.0.1    localhost" )
+   f.write('\n')
    f.write( "::1          localhost" )
+   f.write('\n')
    f.write( "127.0.1.1    " + hostname + ".localdomain " + hostname )
+   f.write('\n')
    f.close()
 
 def gpu_detect( STRAP ):
