@@ -266,7 +266,7 @@ def set_locale( CHROOT ):
     f.close()
     os.system( "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen" )
     os.system( CHROOT + " locale-gen" )
-    os.system( CHROOT + "timedatectl set-timezone Europe/Warsaw" )
+    os.system( CHROOT + " timedatectl set-timezone Europe/Warsaw" )
     os.system( CHROOT + " hwclock --systohc" )
 
 def init_system_check():
@@ -376,7 +376,6 @@ elif efi_check() == False:
 
 base_system_install( STRAP )
 cpu_microcodes_install( STRAP ) 
-user_setup( CHROOT , username , password )
 set_locale( CHROOT )
 
 
@@ -410,6 +409,7 @@ os.system("clear")
 print("debug start")
 
 host_settings( hostname )
+user_setup( CHROOT , username , password )
 
 print("debug end")
 input
