@@ -191,7 +191,7 @@ echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
 
-$STRAP base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos --noconfirm --needed
+$STRAP base base-devel linux linux-firmware linux-headers vim mesa-demos --noconfirm --needed
 
 # This line checks CPU vendor. It will be usefull when we would want to install microcode for our cpu
 CPU=$( grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ') 
@@ -283,7 +283,7 @@ then
 		echo "default arch-*" > /mnt/boot/loader/loader.conf
 		touch /mnt/boot/loader/entries/arch.conf
 		echo "title 	Arch Linux" > /mnt/boot/loader/entries/arch.conf
-		echo "linux /vmlinuz-linux-zen" >> /mnt/boot/loader/entries/arch.conf
+		echo "linux /vmlinuz-linux" >> /mnt/boot/loader/entries/arch.conf
 
 		#This statement chceck witch lines add to bootloader entry
 		#It depends on CPU vendor witch was checked previously
@@ -291,15 +291,15 @@ then
 		if [ $CPU = GenuineIntel ]
 		then
 			echo "initrd  /intel-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "initrd  /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
 			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 		elif [ $CPU = AuthenticAMD ]
 		then
 			echo "initrd  /amd-ucode.img" >> /mnt/boot/loader/entries/arch.conf
-			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "initrd  /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
 			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 		else
-			echo "initrd  /initramfs-linux-zen.img" >> /mnt/boot/loader/entries/arch.conf
+			echo "initrd  /initramfs-linux.img" >> /mnt/boot/loader/entries/arch.conf
 			echo "options root=$ROOT rw resume=$SWAP" >> /mnt/boot/loader/entries/arch.conf
 		fi
 	else
