@@ -1,6 +1,12 @@
 #!/bin/python3
 import argparse
 
+import os
+import getpass
+import platform
+import shutil
+import subprocess
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-d", "--destination",dest = "install_path", help="This parameter sets instalation path for Arch")
@@ -10,12 +16,6 @@ parser.add_argument("-H", "--hostname",dest = "hostname", help="Sets hostname")
 parser.add_argument("-k", "--kernel",dest = "kernel", help="Allows you to choseL Normal, LTS or ZEN kernel")
 
 args = parser.parse_args()
-
-import os
-import getpass
-import platform
-import shutil
-import subprocess
 
 os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog")
 
