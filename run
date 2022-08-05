@@ -237,7 +237,7 @@ echo "$username:$password" | $CHROOT chpasswd
 echo "root:$password" | $CHROOT chpasswd  
 $CHROOT usermod -aG wheel,audio,video,optical,storage $username #adding suer to groups
 # Add sudo no password rights
-sed -i '/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^#//'
+sed -i '/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^#//' /mnt/etc/sudoers
 
 #Setting hostname and hosts file
 echo $hostname > /mnt/etc/hostname
