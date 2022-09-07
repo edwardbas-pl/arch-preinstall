@@ -25,7 +25,7 @@ def get_distro():
         if "arch" in a:
             return "arch"
         elif "artix" in a:
-            return artix
+            return "artix"
 
 def get_install_destination():
     list_disk()
@@ -58,36 +58,36 @@ def get_password():
         quit()
  
 def check_install_path():
-    global install_path
     if args.install_path == None: 
         install_path = get_install_destination()
     else:
         if path_check(args.install_path) == True:
             install_path = args.install_path
         else:
-            print("invalid path.. quiting..")
-            quit()
+            print("Provided path is invalid... Try again")
+            install_path = get_install_destination()
+    return install_path
 
 def check_username():
-    global username
     if args.username == None: 
         username = get_username()
     else:
         username = args.username
+    return username
 
 def check_hostname():
-    global hostanem
     if args.hostname == None: 
         hostname = get_hostname()
     else:
         hostname = args.hostname
+    return hostname
 
 def check_password():
-    global password
     if args.password == None: 
         password = get_password()
     else:
         password = args.password
+    return password
 
 def path_check( path ):
     if os.path.exists(path) == True:
@@ -102,28 +102,27 @@ def nvme_check( path ):
         return False
 
 def set_nvme_variables( disk ):
-    global BOOT
-    global ROOT
-    global SWAP
+    partitions_list = []
     if efi_check() == True:
-        BOOT = disk + "p1"
-        ROOT = disk + "p2"
-        SWAP = disk + "p3"
+        partitions_list.append(disk + "1")
+        partitions_list.append(disk + "2")
+        partitions_list.append(disk + "3")
     else:
-        ROOT = disk + "p1"
-        SWAP = disk + "p2"
+        partitions_list.append(disk + "1")
+        partitions_list.append(disk + "2")
+    return partitions_list
 
 def set_sata_variables( disk ):
-    global BOOT
-    global ROOT
-    global SWAP
+    partitions_list = []
     if efi_check() == True:
-        BOOT = disk + "1"
-        ROOT = disk + "2"
-        SWAP = disk + "3"
+        partitions_list.append(disk + "1")
+        partitions_list.append(disk + "2")
+        partitions_list.append(disk + "3")
+        return partitions_list
     else:
-        ROOT = disk + "1"
-        SWAP = disk + "2"
+        partitions_list.append(disk + "1")
+        partitions_list.append(disk + "2")
+        return partitions_list
 
 def list_disk():
     os.system('lsblk --nodeps')
@@ -146,7 +145,11 @@ def distro_check():
         quit()
 
 
-def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
+def efi_partitions_set( PARTITION_LIST , DISK , swap_size):
+#def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
+    BOOT = PARTITION_LIST[0]
+    ROOT = PARTITION_LIST[1]
+    SWAP = PARTITION_LIST[2]
     os.system("umount " + DISK + "*") #unmounts all partitions of drive
     os.system("sgdisk -Z " + DISK) #zap all on disk
     os.system("sgdisk -a 2048 -o " + DISK)
@@ -162,8 +165,8 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
     os.system("sgdisk -t 3:8200 " + DISK)
 
     #label partitions
-    os.system('sgdisk -c 1:"UEFISYS" ' + BOOT)
-    os.system('sgdisk -c 1:"ROOT" ' + ROOT)
+    os.system('sgdisk -c 1:"UEFISYS" ' + BOOT)  #"BOOT" partition
+    os.system('sgdisk -c 1:"ROOT" ' + ROOT)     #"ROOT" partition
 
     #formating partitions
     os.system('mkfs.vfat -F32 ' + BOOT)
@@ -173,11 +176,12 @@ def efi_partitions_set( BOOT , ROOT , SWAP , DISK , swap_size):
 
     #mounting partitions
     os.system("mount " + ROOT + " /mnt " )
-    #os.mkdir("/mnt/boot")
     os.system("mount " + BOOT + " /mnt/boot ")
 
-def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
+def legacy_partitions_set( PARTITION_LIST , DISK , swap_size ):
     #creating partitions
+    ROOT = PARTITION_LIST[0]
+    SWAP = PARTITION_LIST[1]
     os.system( "wipefs -fa " + DISK )
     root_partition_steps = "( echo o; echo n; echo p; echo 1; echo; echo -" + swap_size + "M; echo t; echo 83; echo w  ) | fdisk " + DISK 
     print(root_partition_steps)
@@ -192,15 +196,19 @@ def legacy_partitions_set( ROOT , SWAP , DISK , swap_size ):
     #mounting partitions
     os.system("mount " + ROOT + " /mnt ")
 
-def set_strap_and_chroot():
-    global STRAP
-    global CHROOT
+def set_chroot():
     if distro_check() == "arch":
-        STRAP = "pacstrap /mnt "
         CHROOT = "arch-chroot /mnt "
     elif distro_check() == "artix":
-        STRAP = "basestrap /mnt"
         CHROOT = "artix-chroot /mnt "
+    return CHROOT
+
+def set_strap():
+    if distro_check() == "arch":
+        STRAP = "pacstrap /mnt "
+    elif distro_check() == "artix":
+        STRAP = "basestrap /mnt"
+        return STRAP
 
 def mirror_refresh():
     print("-------------------------------------------------")
@@ -214,16 +222,16 @@ def cpu_detect():
     cpu = subprocess.getoutput([" grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ' "])
     if "GenuineIntel" in cpu:
         CPU = "intel"
-        return CPU
     elif "AuthenticAMD" in cpu:
         CPU = "amd"
-        return CPU
     else:
         print("unknown cpu")
+        CPU = "unknown"
+    return CPU
 
 def base_system_install( strap ):
     print("instaing base system")
-    os.system( strap + ' base base-devel linux-zen linux-firmware linux-zen-headers vim mesa-demos' )
+    os.system( strap + ' base base-devel linux linux-firmware linux-headers vim mesa-demos' )
 
 def genfstab():
     os.system( "genfstab -U /mnt >> /mnt/etc/fstab")
@@ -241,7 +249,7 @@ def host_settings( hostname ):
    f.write('\n')
    f.close()
 
-def gpu_detect( STRAP ):
+def gpu_drivers( STRAP ):
     gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
     if "Intel" in gpu:
         os.system( STRAP + " xf86-video-intel" )
@@ -249,8 +257,6 @@ def gpu_detect( STRAP ):
         os.system( STRAP + " xf86-video-amdgpu" )
     elif "NV" in gpu:
         os.system( STRAP + " nvidia" )
-    else:
-        print("unknown gpu")
 
 def user_setup( CHROOT , username , password ):
     os.system( CHROOT + " useradd -m " + username )
@@ -258,7 +264,9 @@ def user_setup( CHROOT , username , password ):
     os.system( "echo " + username + ":" + password  + " | " + CHROOT + " chpasswd")
     os.system( "echo 'root:" + password + "' | " + CHROOT + " chpasswd" )
     os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
-    os.system( "sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /mnt/etc/sudoers" )
+    os.system( "chmod +w /mnt/etc/sudoers" )
+    os.system( "sed -i '/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^#//' /mnt/etc/sudoers" )
+    os.system( "chmod -w /mnt/etc/sudoers" )
 
 def set_locale( CHROOT ):
     f = open( "/mnt/etc/locale.conf" , "w" )
@@ -297,7 +305,7 @@ def systemdboot_insall( CHROOT , root , swap ):
     f.write( "options root=" + root + " rw resume=" + swap )
     f.close()
 
-def cpu_microcodes_install( strap ):
+def install_microcodes( strap ):
     if cpu_detect() == 'intel':
         os.system( strap + " intel-ucode" )
     elif cpu_detect() == "amd":
@@ -328,88 +336,92 @@ def networking( strap , chroot ):
         os.system( strap + " networkmanager-s6" )
         os.system( chroot + " s6-rc-bundle -c /etc/s6/rc/compiled add default NetworkManager" )
 
-#usefull variables 
-dist = get_distro()
-BOOT = ""
-ROOT = ""
-SWAP = ""
-username = ""
-hostname = ""
-password = ""
-install_path = ""
-STRAP = ""
-CHROOT = ""
-set_strap_and_chroot()
 
-if distro_check() == "arch":
-    mirror_refresh()
+def set_swap_size():
+    #check ho many ram (in MB) in order to build sufficient swap partition
+    mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+    mem_mega_bytes = mem_bytes/(1024.**2) 
+    swap_size =str(int(mem_mega_bytes))
+    return swap_size
 
-#check ho many ram (in MB) in order to build sufficient swap partition
-mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
-mem_mega_bytes = mem_bytes/(1024.**2) 
-swap_size =str(int(mem_mega_bytes))
-
-#chcecking data crucial for installer 
-check_install_path()
-check_hostname()
-check_username()
-check_password()
- 
-print("esential info:")
-print("distro: " + distro_check())
-print("chroot: " + CHROOT)
-print("strap: " + STRAP)
-
-if nvme_check(install_path) == True:
-    print("installing on nvme")
-    set_nvme_variables(install_path)
-else:
-    print("installing on sata")
-    set_sata_variables(install_path)
-
-if efi_check() == True:
-    print("paritioning disk")
-    print(efi_partitions_set(BOOT , ROOT , SWAP , install_path , swap_size))
-elif efi_check() == False:
-    print("paritioning disk")
-    legacy_partitions_set( ROOT , SWAP , install_path , swap_size)
-
-base_system_install( STRAP )
-cpu_microcodes_install( STRAP ) 
-set_locale( CHROOT )
-
-
-#os.system("clear")
-if efi_check == True:
-    os.system( strap + " efibootmgr" )
-    if distro_check() == "arch":
-        print("installing systemdboot")
+def bootloader_setup( chroot , strap  , path , partitions_list ):
+    if efi_check() == True:
+        os.system( strap + " efibootmgr" )
+        if distro_check() == "arch":
+            print("installing systemdboot")
+            systemdboot_insall( chroot , partitions_list[1] , partitions_list[2] )
+        else: 
+            #installs grub in efi mode
+            print("instaling grub-efi")
+            os.system( strap + " grub efibootmgr" )
+            os.mkdir( "/mnt/boot/efi" )
+            os.mkdir("/mnt/boo/efit")
+            os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + get_distro() + " --efi-directory=/boot" )
+            os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
+    else: 
+        #installs grub legacy
+        print("installing gru legacy")
         os.system( strap + " grub" )
         os.system( chroot + " grub-install " + path )
         os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
-    else: 
-        #installs grub in efi mode
-        print("instaling grub-efi")
-        os.system( strap + " grub efibootmgr" )
-        os.mkdir( "/mnt/boot/efi" )
-        os.mkdir("/mnt/boo/efit")
-        os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=" + distro + " --efi-directory=/boot" )
-        os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )
-else: 
-    #installs grub legacy
-    print("installing gru legacy")
-    os.system( STRAP + " grub" )
-    os.system( CHROOT + " grub-install " + install_path )
-    os.system( CHROOT + " grub-mkconfig -o /boot/grub/grub.cfg" )
+
+def main():
+    PATH = check_install_path()
+    HOSTNAME = check_hostname()
+    USERNAME = check_username()
+    PASSWORD = check_password()
+    STRAP = set_strap()
+    CHROOT = set_chroot()
+    SWAP_SIZE = set_swap_size()
+
+    #If the distro is arch, set fatsest mirrors
+    if distro_check() == "arch":
+        mirror_refresh()
+
+    #Setting up disk partitons
+    if nvme_check(PATH) == True:
+        print("installing on nvme")
+        PARTITION_LIST = set_nvme_variables( PATH )
+    else:
+        print("installing on sata")
+        PARTITION_LIST = set_sata_variables( PATH )
+    
+    if efi_check() == True:
+        print("paritioning disk")
+        efi_partitions_set( PARTITION_LIST , PATH , SWAP_SIZE )
+    elif efi_check() == False:
+        print("paritioning disk")
+        legacy_partitions_set( PARTITION_LIST , PATH , SWAP_SIZE )
+    else:
+        print("Could not detect type of system... quiting")
+        quit()
+
+    base_system_install( STRAP )
+    genfstab()
+    host_settings( HOSTNAME )
+    gpu_drivers( STRAP )
+    user_setup( CHROOT , USERNAME , PASSWORD )
+    install_microcodes( STRAP ) 
+    networking( STRAP , CHROOT )
+    set_locale( CHROOT )
+    bootloader_setup( CHROOT , STRAP , PATH , PARTITION_LIST) 
+    makepkg_flags( CHROOT )
+    pass
+
+
+
+
+
+#print("esential info:")
+#print("distro: " + distro_check())
+#print("chroot: " + CHROOT)
+#print("strap: " + STRAP)
 
 #makepkg_flags( CHROOT )
 #networking( STRAP , CHROOT ) 
 
-os.system("clear")
-print("debug start")
-
-host_settings( hostname )
-user_setup( CHROOT , username , password )
-
-print("debug end")
-input
+#os.system("clear")
+#print("debug start")
+#print("debug end")
+if __name__ == "__main__":
+    main()
