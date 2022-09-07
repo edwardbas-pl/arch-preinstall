@@ -208,7 +208,7 @@ def set_strap():
         STRAP = "pacstrap /mnt "
     elif distro_check() == "artix":
         STRAP = "basestrap /mnt"
-        return STRAP
+    return STRAP
 
 def mirror_refresh():
     print("-------------------------------------------------")
