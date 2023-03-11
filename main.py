@@ -75,7 +75,7 @@ def main():
     # 0 - BOOT ARTITION
     # 1 - ROOT ARTITION
     # 2 - SWAP ARTITION
-    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE )
+    DEST_DRIVE,PARTITION_LIST = get_install_destination( EFI_ENABLED , SWAP_SIZE )
     install( STRAP_COMMAND , component_list )
     host_settings( HOSTNAME )
     os.system( CHROOT_COMMAND + " systemctl enable NetworkManager" )
@@ -85,7 +85,7 @@ def main():
     if EFI_ENABLED == True:
         systemDboot( CHROOT_COMMAND , partition_list , CPU_VENDOR )
     elif EFI_ENABLED == False:
-        grub_efi_install()
+        grub_install()
         pass
     else:
         print("something wen horribly wrong... quiting")

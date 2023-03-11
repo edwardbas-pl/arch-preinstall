@@ -79,6 +79,7 @@ def get_install_destination( is_efi , swap_size ):
     elif len(partition_list) == 2:
         legacy_partitioning( disk , partition_list , swap_size )
         pass
+    return disk,partition_list
     
 
 def set_nvme_variables( disk , is_efi ):
