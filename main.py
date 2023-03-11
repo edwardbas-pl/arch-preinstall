@@ -7,7 +7,7 @@ from disk_prepare import get_install_destination
 from base_install import *
 #from misc import *
 
-def makepkg_flags( chroot ):
+def makepkg_flags():
     nc = multiprocessing.cpu_count()
     #nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
     print( "you have " + nc + " cores" )
@@ -79,7 +79,7 @@ def main():
     install( STRAP_COMMAND , component_list )
     host_settings( HOSTNAME )
     os.system( CHROOT_COMMAND + " systemctl enable NetworkManager" )
-    os.system( chroot + " systemctl enable dhcpd" )
+    os.system( CHROOT_COMMAND + " systemctl enable dhcpd" )
     user_setup( CHROOT_COMMAND , USERNAME , PASSWORD )
     set_locale( CHROOT_COMMAND )
     if EFI_ENABLED == True:
@@ -91,7 +91,7 @@ def main():
         print("something wen horribly wrong... quiting")
         quit()
 
-    makepkg_flags( CHROOT_COMMAND )
+    makepkg_flags()
 
     os.system("clear")
     print("SYSTEM SCUCCESFULLY INSTALLED!")
