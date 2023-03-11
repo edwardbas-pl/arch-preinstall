@@ -67,6 +67,7 @@ def main():
     #print(password)
     #print(hostname)
     mirror_refresh()
+    os.system("clear")
 
     #Preparing disk
     #PARTITION LIST LEGEND:
@@ -77,7 +78,7 @@ def main():
     partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE )
     install( STRAP_COMMAND , component_list )
     host_settings( HOSTNAME )
-    os.system( chroot + " systemctl enable NetworkManager" )
+    os.system( CHROOT_COMMAND + " systemctl enable NetworkManager" )
     os.system( chroot + " systemctl enable dhcpd" )
     user_setup( CHROOT_COMMAND , USERNAME , PASSWORD )
     set_locale( CHROOT_COMMAND )
