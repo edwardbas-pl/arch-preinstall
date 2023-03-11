@@ -1,5 +1,6 @@
 #!/bin/python
 import multiprocessing
+import shutil
 from hardware import *
 from user_settings import *
 from disk_prepare import get_install_destination
@@ -24,7 +25,7 @@ def mirror_refresh():
     os.system( "reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist" )
 
 def main():
-    os.system("pacman -S --noconfirm gptfdisk btrfs-progs dialog laptop-detect ")
+    os.system("pacman -Sy --noconfirm gptfdisk btrfs-progs dialog laptop-detect ")
     #Getting hardware info
     MEM_SIZE = get_mem_size()
     SWAP_SIZE = MEM_SIZE
@@ -57,6 +58,7 @@ def main():
     elif CPU_VENDOR == "AMD":
         component_list.append( " amd-ucode " )
 
+    os.system("clear")
     #Getting to know each other
     USERNAME = get_username()
     HOSTNAME = get_hostname()
