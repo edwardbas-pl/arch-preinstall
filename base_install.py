@@ -78,10 +78,10 @@ def systemDboot( chroot_cmd , partition_list , cpu ):
     f.write( "options root=" + root + " rw resume=" + swap )
     f.close()
 
-def grub_install( strap_cmd ,  ):
-    		$STRAP grub
-		$CHROOT grub-install ${DISK}
-		$CHROOT grub-mkconfig -o /boot/grub/grub.cfg
+def grub_install( strap_cmd , chroot_cmd , disk  ):
+    os.system( strap_cmd  + "grub" )
+    os.system( chroot_cmd + "grub-install " + disk )
+    os.system( chroot_cmd + "grub-mkconfig -o /boot/grub/grub.cfg" )
 #    os.mkdir( "/mnt/boot/efi" )
 #    os.system( chroot + " grub-install --target=x86_64-efi --bootloader-id=ArchLinux --efi-directory=/boot" )
 #    os.system( chroot + " grub-mkconfig -o /boot/grub/grub.cfg" )

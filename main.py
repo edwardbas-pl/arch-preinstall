@@ -8,7 +8,7 @@ from base_install import *
 #from misc import *
 
 def makepkg_flags():
-    nc = multiprocessing.cpu_count()
+    nc = str(multiprocessing.cpu_count())
     #nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
     print( "you have " + nc + " cores" )
     print( "Changing makeflags for " + nc + " cores" )
@@ -38,25 +38,24 @@ def main():
     #print("memmory size: " + mem_size + "MB")
     #print("cpu vendor: " + cpu_vendor)
     #print( "EFI: " + str(efi_enabled) )
-    component_list = []
-    component_list.append(BASE_PACKAGES)
+    component_list = BASE_PACKAGES
 
     if GPU_VENDOR == "intel":
-        component_list.append( " xf86-video-intel " )
+        component_list = component_list + " xf86-video-intel "
     elif GPU_VENDOR == "amd":
-        component_list.append( " xf86-video-amdgpu " )
+        component_list = component_list + " xf86-video-amdgpu "
     elif GPU_VENDOR == "nvidia":
-        component_list.append( " nvidia " )
+        component_list = component_list + " nvidia "
 
     if EFI_ENABLED == True:
-        component_list.append( " efibootmgr " )
+        component_list = component_list + " efibootmgr "
     elif EFI_ENABLED == False:
-        component_list.append( " grub " )
+        component_list = component_list + " grub "
 
     if CPU_VENDOR == "INTEL":
-        component_list.append( " intel-ucode " )
+        component_list = component_list + " intel-ucode "
     elif CPU_VENDOR == "AMD":
-        component_list.append( " amd-ucode " )
+        component_list = component_list + " amd-ucode "
 
     os.system("clear")
     #Getting to know each other
@@ -79,13 +78,13 @@ def main():
     install( STRAP_COMMAND , component_list )
     host_settings( HOSTNAME )
     os.system( CHROOT_COMMAND + " systemctl enable NetworkManager" )
-    os.system( CHROOT_COMMAND + " systemctl enable dhcpd" )
+    #os.system( CHROOT_COMMAND + " systemctl enable dhcpd" )
     user_setup( CHROOT_COMMAND , USERNAME , PASSWORD )
     set_locale( CHROOT_COMMAND )
     if EFI_ENABLED == True:
         systemDboot( CHROOT_COMMAND , partition_list , CPU_VENDOR )
     elif EFI_ENABLED == False:
-        grub_install()
+        grub_install( CHROOT_COMMAND , STRAP_COMMAND , DEST_DRIVE )
         pass
     else:
         print("something wen horribly wrong... quiting")
