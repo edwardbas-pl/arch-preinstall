@@ -24,4 +24,6 @@ def get_password( password:str = None ) -> str:
         elif password != second_password:
             print("passwords doesnt match... Try Again")
             password = get_password()
+        else:
+            pass
     return password

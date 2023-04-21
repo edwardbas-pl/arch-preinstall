@@ -64,10 +64,13 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
     os.system("mount " + ROOT + " /mnt ")
 
 
-def get_install_destination( is_efi:bool , swap_size:str ) -> list:
-    list_disk()
-    print("Chose where to install Arch")
-    disk = input()
+def get_install_destination( is_efi:bool , swap_size:str , path:str = None ) -> list:
+    if path == None:
+        list_disk()
+        print("Chose where to install Arch")
+        disk = input()
+    else:
+        disk = path
     if nvme_check( disk ) == True:
         #print("path exist")
         partition_list = set_nvme_variables( disk , is_efi )

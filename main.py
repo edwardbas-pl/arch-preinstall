@@ -9,14 +9,14 @@ from base_install import *
 #TODO install path check
 #TODO out of the box experience like process
 
-def makepkg_flags( chroot ) -> None:
+def makepkg_flags( chroot:str , path:str) -> None: #TODO remove chroot. it unneccesarry
     nc = multiprocessing.cpu_count()
     #nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
     print( "you have " + str(nc) + " cores" )
     print( "Changing makeflags for " + str(nc) + " cores" )
-    os.system( "sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + str(nc) + "/g' /mnt/etc/makepkg.conf" )
+    os.system( "sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + str(nc) + "/g' " + path )
     print( "Changing the compression settings for " + str(nc) + " cores" )
-    os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + str(nc) + " -z -)/g' /mnt/etc/makepkg.conf" )
+    os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + str(nc) + " -z -)/g' " + path )
 
 def mirror_refresh() -> None:
     print("-------------------------------------------------")
@@ -29,20 +29,62 @@ def mirror_refresh() -> None:
     os.system( "reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist" )
 
 def main( args = None ) -> None:
+    path = None
+    username = None
+    hostname = None
+    password = None
+    CHROOT_COMMAND = "arch-chroot /mnt "
+    if args != None:
+        try:
+            short_flags = [ '-d' , '-u' , '-h' , "-p" ]
+            flags_flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
+            for i in args:
+                if i == '-d' or i == '--destination':
+                    index = args.index(i)
+                    value = args[index+1]
+                    path = value
+                if i == '-u' or i == '--user':
+                    index = args.index(i)
+                    value = args[index+1]
+                    username = value
+                if i == '-h' or i == '--hostname':
+                    index = args.index(i)
+                    value = args[index+1]
+                    hostname = value
+                if i == '-p' or i == '--password':
+                    index = args.index(i)
+                    value = args[index+1]
+                    password = value
+        except IndexError:
+            print("you myust provide a value to a flag")
+
+    else:
+        pass
+    makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
     required_packages = [ 'gptfdisk' , 'btrfs-progs dialog' , 'laptop-detect' ]
-    USERNAME = get_username()
-    HOSTNAME = get_hostname()
-    PASSWORD = get_password()
+    if username == None:
+        USERNAME = get_username()
+    else:
+        USERNAME = username
+    if hostname == None:
+        HOSTNAME = get_hostname()
+    else:
+        HOSTNAME = hostname
+    if password == None:
+        PASSWORD = get_password()
+    else:
+        PASSWORD = password
+
+
     EFI_ENABLED = efi_check()
     MEM_SIZE = get_mem_size()
     SWAP_SIZE = MEM_SIZE
-    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE )
+    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
     os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
     #Getting hardware info
     GPU_VENDOR = get_gpu_vendor()
     CPU_VENDOR = get_cpu_vendor()
     STRAP_COMMAND = "pacstrap /mnt "
-    CHROOT_COMMAND = "arch-chroot /mnt "
     BASE_PACKAGES = ['base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd']
     #print("memmory size: " + mem_size + "MB")
     #print("cpu vendor: " + cpu_vendor)
@@ -92,14 +134,12 @@ def main( args = None ) -> None:
     else:
         print("something wen horribly wrong... quiting")
         quit()
-
-    makepkg_flags( CHROOT_COMMAND )
-
+    makepkg_flags( CHROOT_COMMAND  , "/mnt/etc/makepkg.conf")
     os.system("clear")
     print("SYSTEM SCUCCESFULLY INSTALLED!")
 
 if __name__ == "__main__":
-    if len(arg.sysv) > 1:
+    if len(sys.argv) > 1:
         main(sys.argv[1:])
     else:
         main()
