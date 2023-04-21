@@ -1,17 +1,17 @@
 import os
 
-def list_disk():
+def list_disk() -> None:
     os.system('lsblk --nodeps')
     
 
-def nvme_check( path ):
+def nvme_check( path:str ) -> bool:
     if "nvme" in path:
         return True
     else:
         return False
 
 
-def efi_partitioning( DISK , PARTITION_LIST , swap_size ):
+def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     BOOT = PARTITION_LIST[0]
     ROOT = PARTITION_LIST[1]
     SWAP = PARTITION_LIST[2]
@@ -41,10 +41,11 @@ def efi_partitioning( DISK , PARTITION_LIST , swap_size ):
 
     #mounting partitions
     os.system("mount " + ROOT + " /mnt " )
+    os.system("mkdir -p /mnt/boot")
     os.system("mount " + BOOT + " /mnt/boot ")
 
 
-def legacy_partitioning( DISK , PARTITION_LIST , swap_size ):
+def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     #creating partitions
     ROOT = PARTITION_LIST[0]
     SWAP = PARTITION_LIST[1]
@@ -63,7 +64,7 @@ def legacy_partitioning( DISK , PARTITION_LIST , swap_size ):
     os.system("mount " + ROOT + " /mnt ")
 
 
-def get_install_destination( is_efi , swap_size ):
+def get_install_destination( is_efi:bool , swap_size:str ) -> list:
     list_disk()
     print("Chose where to install Arch")
     disk = input()
@@ -79,10 +80,10 @@ def get_install_destination( is_efi , swap_size ):
     elif len(partition_list) == 2:
         legacy_partitioning( disk , partition_list , swap_size )
         pass
-    return disk,partition_list
+    return partition_list
     
 
-def set_nvme_variables( disk , is_efi ):
+def set_nvme_variables( disk:str , is_efi:bool ) -> list:
     partitions_list = []
     if  is_efi == True:
         partitions_list.append(disk + "p1")
@@ -94,7 +95,7 @@ def set_nvme_variables( disk , is_efi ):
     return partitions_list
 
 
-def set_sata_variables( disk , is_efi ):
+def set_sata_variables( disk:str , is_efi:bool ) -> list:
     partitions_list = []
     if is_efi == True:
         partitions_list.append(disk + "1")

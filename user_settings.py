@@ -1,6 +1,6 @@
 import getpass
 
-def get_username( username=None):
+def get_username( username:str = None ) -> str:
     if username == None:
         print("Username: ")
         username = str(input())
@@ -8,14 +8,14 @@ def get_username( username=None):
         pass
     return username
 
-def get_hostname( hostname=None ):
+def get_hostname( hostname:str = None ) -> str:
     if hostname == None:
         hostname = str(input("Enter Hostname: "))
     else:
         pass
     return hostname
 
-def get_password( password=None ):
+def get_password( password:str = None ) -> str:
     if password == None:
         password = getpass.getpass()
         second_password = getpass.getpass("retype password")

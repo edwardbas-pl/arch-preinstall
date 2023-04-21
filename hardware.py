@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-def check_install_path( path = None):
+def check_install_path( path:str = None) -> None:
     if path == None: 
         install_path = get_install_destination()
     else:
@@ -12,19 +12,19 @@ def check_install_path( path = None):
             install_path = get_install_destination()
     return install_path
 
-def nvme_check( path ):
+def nvme_check( path:str ) -> bool:
     if "nvme" in path:
         return True
     else:
         return False
 
-def efi_check():
+def efi_check() -> bool:
     if os.path.exists("/sys/firmware/efi/efivars") == True:
         return True
     else:
         return False
 
-def get_cpu_vendor():
+def get_cpu_vendor() -> str:
     cpu = subprocess.getoutput([" grep -m 1 vendor_id /proc/cpuinfo  | awk '{print $3} ' "])
     if "GenuineIntel" in cpu:
         CPU = "INTEL"
@@ -41,7 +41,7 @@ def get_mem_size(): #GOOD
     mem_mega_bytes = mem_bytes/(1024.**2) 
     return str(round(mem_mega_bytes))
 
-def get_gpu_vendor(): #GOOD
+def get_gpu_vendor() -> str: #GOOD
     gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
     if "Intel" in gpu:
         gpu = "intel"
