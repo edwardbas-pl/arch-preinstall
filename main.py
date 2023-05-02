@@ -86,7 +86,7 @@ def main( args = None ) -> None:
     GPU_VENDOR = get_gpu_vendor()
     CPU_VENDOR = get_cpu_vendor()
     STRAP_COMMAND = "pacstrap /mnt "
-    BASE_PACKAGES = ['base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd']
+    BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]
     #print("memmory size: " + mem_size + "MB")
     #print("cpu vendor: " + cpu_vendor)
     #print( "EFI: " + str(efi_enabled) )
