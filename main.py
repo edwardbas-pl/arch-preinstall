@@ -5,6 +5,7 @@ from hardware import *
 from user_settings import *
 from disk_prepare import get_install_destination
 from base_install import *
+from profiles import *
 #from misc import *
 #TODO install path check
 #TODO out of the box experience like process
@@ -19,20 +20,15 @@ def makepkg_flags( chroot:str , path:str) -> None: #TODO remove chroot. it unnec
     os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + str(nc) + " -z -)/g' " + path )
 
 def mirror_refresh() -> None:
-    print("-------------------------------------------------")
-    print("    Setting up mirrors for optimal download      ")
-    print("-------------------------------------------------")
-    os.system("pacman-key --init")
-    os.system("pacman -Sy reflector --noconfirm")
-    os. system( "cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old" )
-    #shutil.copy( "/etc/pacman.d/mirrorlist" , "/etc/pacman.d/mirrorlist.old")
-    os.system( "reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist" )
+    pwd = os.getcwd()
+    os.system( "sh " + pwd + "/makepkgflags" )
 
 def main( args = None ) -> None:
     path = None
     username = None
     hostname = None
     password = None
+    profile_is_defined = None
     CHROOT_COMMAND = "arch-chroot /mnt "
     if args != None:
         try:
@@ -55,6 +51,11 @@ def main( args = None ) -> None:
                     index = args.index(i)
                     value = args[index+1]
                     password = value
+                if i == '--profile':
+                    index = args.index(i)
+                    value = args[index+1]
+                    profile_is_defined = True
+                    profile_value = value
         except IndexError:
             print("you myust provide a value to a flag")
 
@@ -135,6 +136,12 @@ def main( args = None ) -> None:
         print("something wen horribly wrong... quiting")
         quit()
     makepkg_flags( CHROOT_COMMAND  , "/mnt/etc/makepkg.conf")
+
+    if profile_is_defined == True:
+        if profile_value.lower() == "gnome":
+            install_profile( USERNAME , profile_value.lower() )
+
+
     os.system("clear")
     print("SYSTEM SCUCCESFULLY INSTALLED!")
 
