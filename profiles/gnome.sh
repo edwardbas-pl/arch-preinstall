@@ -19,8 +19,9 @@ $install ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol 
 
 gsettings set org.cinnamon.desktop.default-applications.terminal exec $TERMINAL
 
+
 GNOME_VERSION=$(gnome-shell --version | awk '{print $3}' | cut -d'.' -f 1)
-declare -a array=( "2890" "615" "1460" "3193" "5547" "1160" "1319" )
+declare -a array=( 2890 615 1460 3193 5547 1160 1319 )
 arraylength=${#array[@]}
 for (( i=0; i<${arraylength}; i++ ));
 do
@@ -29,7 +30,12 @@ do
   # gnome-shell-extension-installer --yes ${array[$i]} $GNOME_VERSION 
 done
 
-$install gnome-shell-extension-arc-menu-git gnome-shell-extension-tray-icons-reloaded1
+$install gnome-shell-extension-arc-menu-git 
+$install gnome-shell-extension-dash-to-panel-git
+$install gnome-shell-extension-dash-to-vitals
+$install gnome-shell-extension-appindicator-git
+$install gnome-shell-extension-blur-my-shell
+$install gnome-shell-extension-custom-accent-colors-git
 
 sudo mkdir -p /etc/pulse/default.pa.d/
 sudo echo > /etc/pulse/default.pa.d/noise-cancellation.pa << EOF
