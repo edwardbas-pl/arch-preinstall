@@ -10,7 +10,7 @@ $install $TERMINAL
 
 git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
 
-$install gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer
+$install gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculator
 sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
@@ -51,4 +51,5 @@ fi
 $flat_install flathub com.discordapp.Discord
 clear
 sudo reboot
-
+gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
+gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
