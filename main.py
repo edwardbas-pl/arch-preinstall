@@ -85,7 +85,7 @@ def main( args = None ) -> None:
     CPU_VENDOR = get_cpu_vendor()
     
     #creating list of partition
-    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
+    partition_list = prepare_disks( EFI_ENABLED , SWAP_SIZE , path )
 
     STRAP_COMMAND = "pacstrap /mnt "
     BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]
@@ -123,7 +123,7 @@ def main( args = None ) -> None:
     install( STRAP_COMMAND , component_list )
     host_settings( HOSTNAME )
     os.system( CHROOT_COMMAND + " systemctl enable NetworkManager" )
-    os.system( CHROOT_COMMAND + " systemctl enable dhcpd" )
+    # os.system( CHROOT_COMMAND + " systemctl enable dhcpd" )
     user_setup( CHROOT_COMMAND , USERNAME , PASSWORD )
     set_locale( CHROOT_COMMAND )
     if EFI_ENABLED == True:
