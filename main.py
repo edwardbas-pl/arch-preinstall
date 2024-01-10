@@ -30,29 +30,44 @@ def main( args = None ) -> None:
     if args != None:
         try:
             short_flags = [ '-d' , '-u' , '-h' , "-p" ]
-            flags_flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
+            flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
             for i in args:
                 if i == '-d' or i == '--destination':
                     index = args.index(i)
                     value = args[index+1]
-                    path = value
+                    if value in short_flags or flags:
+                        raise IndexError
+                    else:
+                        path = value
                 if i == '-u' or i == '--user':
                     index = args.index(i)
                     value = args[index+1]
-                    username = value
+                    if value in short_flags or flags:
+                        raise IndexError
+                    else:
+                        username = value
                 if i == '-h' or i == '--hostname':
                     index = args.index(i)
                     value = args[index+1]
-                    hostname = value
+                    if value in short_flags or flags:
+                        raise IndexError
+                    else:
+                        hostname = value
                 if i == '-p' or i == '--password':
                     index = args.index(i)
                     value = args[index+1]
-                    password = value
+                    if value in short_flags or flags:
+                        raise IndexError
+                    else:
+                        password = value
                 if i == '--profile':
                     index = args.index(i)
                     value = args[index+1]
-                    profile_is_defined = True
-                    profile_value = value
+                    if value in short_flags or flags:
+                        raise IndexError
+                    else:
+                        profile_is_defined = True
+                        profile_value = value
         except IndexError:
             print("you myust provide a value to a flag")
     else:
