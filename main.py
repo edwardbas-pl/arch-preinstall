@@ -6,7 +6,6 @@ from user_settings import *
 from disk_prepare import get_install_destination
 from base_install import *
 from profiles import *
-#TODO install path check
 
 def makepkg_flags( chroot:str , path:str) -> None: 
     #This function sets -j flag (number of cores used for compilig packages from AUR) as number of available cores in order to speedup compilation process
