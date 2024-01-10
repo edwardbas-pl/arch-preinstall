@@ -35,39 +35,24 @@ def main( args = None ) -> None:
                 if i == '-d' or i == '--destination':
                     index = args.index(i)
                     value = args[index+1]
-                    if value in short_flags or flags:
-                        raise IndexError
-                    else:
-                        path = value
+                    path = value
                 if i == '-u' or i == '--user':
                     index = args.index(i)
                     value = args[index+1]
-                    if value in short_flags or flags:
-                        raise IndexError
-                    else:
-                        username = value
+                    username = value
                 if i == '-h' or i == '--hostname':
                     index = args.index(i)
                     value = args[index+1]
-                    if value in short_flags or flags:
-                        raise IndexError
-                    else:
-                        hostname = value
+                    hostname = value
                 if i == '-p' or i == '--password':
                     index = args.index(i)
                     value = args[index+1]
-                    if value in short_flags or flags:
-                        raise IndexError
-                    else:
-                        password = value
+                    password = value
                 if i == '--profile':
                     index = args.index(i)
                     value = args[index+1]
-                    if value in short_flags or flags:
-                        raise IndexError
-                    else:
-                        profile_is_defined = True
-                        profile_value = value
+                    profile_is_defined = True
+                    profile_value = value
         except IndexError:
             print("You myust provide a value to a flag")
     else:
@@ -100,7 +85,7 @@ def main( args = None ) -> None:
     CPU_VENDOR = get_cpu_vendor()
     
     #creating list of partition
-    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
+    partition_list = get_install_path( EFI_ENABLED , SWAP_SIZE , path )
 
     STRAP_COMMAND = "pacstrap /mnt "
     BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]
