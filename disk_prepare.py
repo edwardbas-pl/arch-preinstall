@@ -72,6 +72,10 @@ def get_install_destination( is_efi:bool , swap_size:str , path:str = None ) -> 
         disk = input()
     else:
         disk = path
+    if os.path.exists(disk) == False:
+        os.system("clear")
+        print("Destination drive was not found... Exiting!")
+        quit()
     if nvme_check( disk ) == True:
         #print("path exist")
         partition_list = set_nvme_variables( disk , is_efi )

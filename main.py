@@ -6,13 +6,11 @@ from user_settings import *
 from disk_prepare import get_install_destination
 from base_install import *
 from profiles import *
-#from misc import *
 #TODO install path check
-#TODO out of the box experience like process
 
-def makepkg_flags( chroot:str , path:str) -> None: #TODO remove chroot. it unneccesarry
+def makepkg_flags( chroot:str , path:str) -> None: 
+    #This function sets -j flag (number of cores used for compilig packages from AUR) as number of available cores in order to speedup compilation process
     nc = multiprocessing.cpu_count()
-    #nc = subprocess.getoutput ([ "grep -c ^processor /proc/cpuinfo" ])
     print( "you have " + str(nc) + " cores" )
     print( "Changing makeflags for " + str(nc) + " cores" )
     os.system( "sed -i 's/#MAKEFLAGS='-j2'/MAKEFLAGS='-j" + str(nc) + "/g' " + path )
