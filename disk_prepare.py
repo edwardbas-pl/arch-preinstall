@@ -66,12 +66,6 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
 
 
 def prepare_disks( is_efi:bool , swap_size:str , path:str = None ) -> list:
-    if path == None:
-        list_disk()
-        print("Chose where to install Arch")
-        disk = input()
-    else:
-        disk = path
     if os.path.exists(disk) == False:
         os.system("clear")
         print("Destination drive was not found... Exiting...")
