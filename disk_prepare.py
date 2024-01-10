@@ -77,10 +77,7 @@ def prepare_disks( is_efi:bool , swap_size:str , path:str = None ) -> list:
         print("Destination drive was not found... Exiting...")
         quit()
     else:
-        if "/dev/" not in disk:
-            os.system("clear")
-            print("provided path is not a drive... Exiting!")
-            quit()
+        pass
     if nvme_check( disk ) == True:
         #print("path exist")
         partition_list = set_nvme_variables( disk , is_efi )

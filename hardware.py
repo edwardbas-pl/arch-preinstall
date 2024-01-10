@@ -5,7 +5,7 @@ def check_install_path( path:str = None) -> None:
     if path == None: 
         install_path = get_install_destination()
     else:
-        if path_check(path) == True:
+        if path_check(path) == True and "/dev/" in path:
             install_path = path
         else:
             print("Provided path is invalid... Try again")
