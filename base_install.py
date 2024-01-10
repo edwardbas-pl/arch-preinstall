@@ -86,6 +86,6 @@ def systemDboot( chroot_cmd:str , partition_list:str , cpu:str ) -> None:
     f.write( "options\t\troot=" + root + " rw resume=" + swap )
     f.close()
 
-def grub_install( chroot_cmd:strm , path:str ) -> None:
+def grub_install( chroot_cmd:str , path:str ) -> None:
     os.system( chroot_cmd + " grub-install " + path )
     os.system( chroot_cmd + " grub-mkconfig -o /boot/grub/grub.cfg" )
