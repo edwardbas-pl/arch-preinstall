@@ -87,8 +87,5 @@ def systemDboot( chroot_cmd:str , partition_list:str , cpu:str ) -> None:
     f.close()
 
 def grub_install( chroot_cmd:str ) -> None:
-    efi_path = Path( r"/mnt/boot/efi" )
-    efi_path.mkdir()
-    # os.path.mkdir( "/mnt/boot/efi" )
     os.system( chroot_cmd + " grub-install --target=x86_64-efi --bootloader-id=ArchLinux --efi-directory=/boot" )
     os.system( chroot_cmd + " grub-mkconfig -o /boot/grub/grub.cfg" )
