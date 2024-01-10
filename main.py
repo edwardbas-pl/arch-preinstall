@@ -55,11 +55,12 @@ def main( args = None ) -> None:
                     profile_value = value
         except IndexError:
             print("you myust provide a value to a flag")
-
     else:
         pass
+
     makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
     required_packages = [ 'gptfdisk' , 'btrfs-progs dialog' , 'laptop-detect' ]
+
     if username == None:
         USERNAME = get_username()
     else:
@@ -73,20 +74,21 @@ def main( args = None ) -> None:
     else:
         PASSWORD = password
 
+    #installing packges requierd for performing installation
+    os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
 
+    #Getting hardware info
     EFI_ENABLED = efi_check()
     MEM_SIZE = get_mem_size()
-    SWAP_SIZE = MEM_SIZE
-    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
-    os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
-    #Getting hardware info
     GPU_VENDOR = get_gpu_vendor()
+    SWAP_SIZE = MEM_SIZE
     CPU_VENDOR = get_cpu_vendor()
+    
+    #creating list of partition
+    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
+
     STRAP_COMMAND = "pacstrap /mnt "
     BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]
-    #print("memmory size: " + mem_size + "MB")
-    #print("cpu vendor: " + cpu_vendor)
-    #print( "EFI: " + str(efi_enabled) )
     component_list = BASE_PACKAGES
 
     if GPU_VENDOR == "intel":
@@ -106,10 +108,7 @@ def main( args = None ) -> None:
     elif CPU_VENDOR == "AMD":
         component_list.append( "amd-ucode" )
 
-    #Getting to know each other
-    #print( "Welcome " + username + "!" )
-    #print(password)
-    #print(hostname)
+    #refreshing mirrors for better download speed
     mirror_refresh()
 
     #Preparing disk
