@@ -3,7 +3,7 @@ import multiprocessing
 import sys
 from hardware import *
 from user_settings import *
-from disk_prepare import disk_prepare
+from disk_prepare import prepare_disks
 from base_install import *
 from profiles import *
 
