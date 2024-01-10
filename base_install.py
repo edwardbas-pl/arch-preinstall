@@ -2,10 +2,7 @@ import os
 from pathlib import Path
 
 def install( strap_cmd , component_list ) -> None:
-#    for i in component_list:
-#        os.system( strap_cmd + i )
-#        pass
-    os.system( strap_cmd + ' ' + ' '.join(component_list))
+    os.system( strap_cmd + ' '.join(component_list))
     genfstab()
 
 def genfstab() -> None:
@@ -28,16 +25,10 @@ def user_setup( CHROOT:str , username:str , password:str ) -> None:
     os.system( CHROOT + " useradd -m " + username )
     os.system( CHROOT + " usermod -aG wheel,uucp,video,audio,storage,games,input " + username )
     os.system( "echo " + username + ":" + password  + " | " + CHROOT + " chpasswd")
-    os.system( "echo 'root:" + password + "' | " + CHROOT + " chpasswd" )
+    # os.system( "echo 'root:" + password + "' | " + CHROOT + " chpasswd" )
     os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
-    #os.system( "chmod +w /mnt/etc/sudoers" )
-    #os.system( CHROOT + " sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers" )
-    #os.system( "chmod +w /mnt/etc/sudoers" )
-    #os.system( "echo  '%wheel ALL=(ALL) NOPASSWD: ALL' >> /mnt/etc/sudoers" )
     with open('/mnt/etc/sudoers.d/user', 'w+') as f:
         f.write('%wheel ALL=(ALL) NOPASSWD: ALL\n')
-    #os.system( "chmod -w /mnt/etc/sudoers.d/user" )
-    # os.system( "chmod -w /mnt/etc/sudoers" )
 
 def set_locale( CHROOT:str ) -> None:
     f = open( "/mnt/etc/locale.conf" , "w" )
