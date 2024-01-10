@@ -85,7 +85,13 @@ def main( args = None ) -> None:
     CPU_VENDOR = get_cpu_vendor()
     
     #creating list of partition
-    partition_list = get_install_path( EFI_ENABLED , SWAP_SIZE , path )
+    partition_list = get_install_destination( EFI_ENABLED , SWAP_SIZE , path )
+    if EFI_ENABLED == True:
+
+        pass
+    elif EFI_ENABLED == False:
+
+        pass
 
     STRAP_COMMAND = "pacstrap /mnt "
     BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]

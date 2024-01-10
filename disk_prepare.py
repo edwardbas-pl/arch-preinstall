@@ -78,9 +78,9 @@ def get_install_destination( is_efi:bool , swap_size:str , path:str = None ) -> 
         quit()
     else:
         if "/dev/" not in disk:
-            os.system("clear")
-            print("provided path is not a drive... Exiting...")
-            quit()
+        os.system("clear")
+        print("provided path is not a drive... Exiting!")
+        quit()
 
     if nvme_check( disk ) == True:
         #print("path exist")

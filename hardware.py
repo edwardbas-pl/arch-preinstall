@@ -1,6 +1,16 @@
 import os
 import subprocess
 
+def check_install_path( path:str = None) -> None:
+    if path == None: 
+        install_path = get_install_destination()
+    else:
+        if path_check(path) == True:
+            install_path = path
+        else:
+            print("Provided path is invalid... Try again")
+            install_path = get_install_destination()
+    return install_path
 
 def nvme_check( path:str ) -> bool:
     if "nvme" in path:
