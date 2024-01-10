@@ -49,7 +49,8 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
     #creating partitions
     ROOT = PARTITION_LIST[0]
     SWAP = PARTITION_LIST[1]
-    os.system( "wipefs -fa " + DISK )
+    # os.system( "wipefs -fa " + DISK )
+    os.system("sgdisk -Z " + DISK) #zap all on disk
     root_partition_steps = "( echo o; echo n; echo p; echo 1; echo; echo -" + swap_size + "M; echo t; echo 83; echo w  ) | fdisk " + DISK 
     print(root_partition_steps)
     os.system(root_partition_steps)
