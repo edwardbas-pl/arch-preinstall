@@ -130,7 +130,7 @@ def main( args = None ) -> None:
     if EFI_ENABLED == True:
         systemDboot( CHROOT_COMMAND , partition_list , CPU_VENDOR )
     elif EFI_ENABLED == False:
-        grub_efi_install()
+        grub_install( CHROOT_COMMAND )
         pass
     else:
         print("something wen horribly wrong... quiting")
