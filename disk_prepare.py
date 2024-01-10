@@ -65,7 +65,7 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
     os.system("mount " + ROOT + " /mnt ")
 
 
-def prepare_disks( is_efi:bool , swap_size:str , path:str = None ) -> list:
+def prepare_disks( is_efi:bool , swap_size:str , disk:str = None ) -> list:
     if os.path.exists(disk) == False:
         os.system("clear")
         print("Destination drive was not found... Exiting...")
