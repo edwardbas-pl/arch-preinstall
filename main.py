@@ -69,12 +69,9 @@ def main( args = None ) -> None:
                         profile_is_defined = True
                         profile_value = value
         except IndexError:
-            print("you myust provide a value to a flag")
+            print("You myust provide a value to a flag")
     else:
         pass
-
-    makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
-    required_packages = [ 'gptfdisk' , 'btrfs-progs dialog' , 'laptop-detect' ]
 
     if username == None:
         USERNAME = get_username()
@@ -88,6 +85,9 @@ def main( args = None ) -> None:
         PASSWORD = get_password()
     else:
         PASSWORD = password
+
+    makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
+    required_packages = [ 'gptfdisk' , 'btrfs-progs' , 'dialog' , 'laptop-detect' ]
 
     #installing packges requierd for performing installation
     os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
@@ -106,18 +106,21 @@ def main( args = None ) -> None:
     BASE_PACKAGES = [ 'base' , 'base-devel' , 'linux' , 'linux-firmware' , 'linux-headers' , 'vim' , 'mesa-demos' , 'networkmanager' , 'dhcpcd' , 'git' ]
     component_list = BASE_PACKAGES
 
+    #determinig which gpu drivers to install
     if GPU_VENDOR == "intel":
         component_list.append( "xf86-video-intel" )
     elif GPU_VENDOR == "amd":
         component_list.append( "xf86-video-amdgpu" )
     elif GPU_VENDOR == "nvidia":
         component_list.append( "nvidia" )
-
+    
+    #determinig which package is needed for bootloader instalation in case of EFI or LEGACY boot
     if EFI_ENABLED == True:
         component_list.append( "efibootmgr" )
     elif EFI_ENABLED == False:
         component_list.append( "grub" )
 
+    #determinig which cpu microcode to installdepending on cpu vendor
     if CPU_VENDOR == "INTEL":
         component_list.append( "intel-ucode" )
     elif CPU_VENDOR == "AMD":

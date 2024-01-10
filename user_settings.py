@@ -2,8 +2,7 @@ import getpass
 
 def get_username( username:str = None ) -> str:
     if username == None:
-        print("Username: ")
-        username = str(input())
+        username = str(input("Enter Username: "))
     else:
         pass
     return username

@@ -1,16 +1,6 @@
 import os
 import subprocess
 
-def check_install_path( path:str = None) -> None:
-    if path == None: 
-        install_path = get_install_destination()
-    else:
-        if path_check(path) == True:
-            install_path = path
-        else:
-            print("Provided path is invalid... Try again")
-            install_path = get_install_destination()
-    return install_path
 
 def nvme_check( path:str ) -> bool:
     if "nvme" in path:
@@ -35,13 +25,13 @@ def get_cpu_vendor() -> str:
         CPU = "unknown"
     return CPU
 
-def get_mem_size(): #GOOD
+def get_mem_size() -> str:
     #check ho many ram (in MB) in order to build sufficient swap partition
     mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
     mem_mega_bytes = mem_bytes/(1024.**2) 
     return str(round(mem_mega_bytes))
 
-def get_gpu_vendor() -> str: #GOOD
+def get_gpu_vendor() -> str: 
     gpu = subprocess.getoutput([" lspci | grep -i --color 'vga\|3d\|2d' "])
     if "Intel" in gpu:
         gpu = "intel"
