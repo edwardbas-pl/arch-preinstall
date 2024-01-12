@@ -17,8 +17,12 @@ def makepkg_flags( chroot:str , path:str) -> None:
     os.system( "sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T " + str(nc) + " -z -)/g' " + path )
 
 def mirror_refresh() -> None:
-    pwd = os.getcwd()
-    os.system( "sh " + pwd + "/makepkgflags" )
+    # pwd = os.getcwd()
+    os.system("pacman -Sy pacman-keyring")
+    os.system("papacman-key --init")
+    os.system("pacp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old")
+    os.system("pareflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist")
+    # os.system( "sh " + pwd + "/makepkgflags" )
 
 def main( args = None ) -> None:
     path = None
@@ -72,7 +76,7 @@ def main( args = None ) -> None:
         PASSWORD = password
 
     makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
-    required_packages = [ 'gptfdisk' , 'btrfs-progs' , 'dialog' , 'laptop-detect' ]
+    required_packages = [ 'gptfdisk' , 'btrfs-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
 
     #installing packges requierd for performing installation
     os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))

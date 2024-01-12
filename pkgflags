@@ -2,8 +2,8 @@
 echo"-------------------------------------------------"
 echo"    Setting up mirrors for optimal download      "
 echo"-------------------------------------------------"
+pacman -Sy pacman-keyring
 pacman-key --init
-pacman -Sy reflector --noconfirm
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old
 reflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist
 
