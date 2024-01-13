@@ -3,7 +3,6 @@ import os
 def list_disk() -> None:
     os.system('lsblk --nodeps')
     
-
 def nvme_check( path:str ) -> bool:
     if "nvme" in path:
         return True

@@ -94,14 +94,18 @@ def main( args = None ) -> None:
     component_list = BASE_PACKAGES
 
     #determinig which gpu drivers to install
+    #print("memmory size: " + mem_size + "MB")
+    #print("cpu vendor: " + cpu_vendor)
+    #print( "EFI: " + str(efi_enabled) )
+    component_list = BASE_PACKAGES
+
     if GPU_VENDOR == "intel":
         component_list.append( "xf86-video-intel" )
     elif GPU_VENDOR == "amd":
         component_list.append( "xf86-video-amdgpu" )
     elif GPU_VENDOR == "nvidia":
         component_list.append( "nvidia" )
-    
-    #determinig which package is needed for bootloader instalation in case of EFI or LEGACY boot
+
     if EFI_ENABLED == True:
         component_list.append( "efibootmgr" )
     elif EFI_ENABLED == False:
@@ -113,7 +117,6 @@ def main( args = None ) -> None:
     elif CPU_VENDOR == "AMD":
         component_list.append( "amd-ucode" )
 
-    #refreshing mirrors for better download speed
     mirror_refresh()
 
     #Preparing disk

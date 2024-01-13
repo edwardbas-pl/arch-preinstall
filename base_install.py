@@ -17,6 +17,7 @@ def host_settings( hostname:str ) -> None:
     f.write( "127.0.1.1    " + hostname + ".localdomain " + hostname )
     f.close()
 
+#creating new user, adding hom to usergroups and giving him sudo privilige
 def user_setup( CHROOT:str , username:str , password:str ) -> None:
     os.system( CHROOT + " useradd -m " + username )
     os.system( CHROOT + " usermod -aG wheel,uucp,video,audio,storage,games,input " + username )
