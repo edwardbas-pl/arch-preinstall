@@ -3,7 +3,6 @@ from pathlib import Path
 
 def install( strap_cmd , component_list ) -> None:
     os.system( strap_cmd + ' '.join(component_list))
-    genfstab()
 
 def genfstab() -> None:
     os.system( "genfstab -U /mnt >> /mnt/etc/fstab")
@@ -13,12 +12,9 @@ def host_settings( hostname:str ) -> None:
     f.write(hostname)
     f.close()
     f = open("/etc/hosts" , "w" )
-    f.write( "127.0.0.1    localhost" )
-    f.write('\n')
-    f.write( "::1          localhost" )
-    f.write('\n')
+    f.write( "127.0.0.1    localhost\n" )
+    f.write( "::1          localhost\n" )
     f.write( "127.0.1.1    " + hostname + ".localdomain " + hostname )
-    f.write('\n')
     f.close()
 
 def user_setup( CHROOT:str , username:str , password:str ) -> None:
@@ -32,25 +28,16 @@ def user_setup( CHROOT:str , username:str , password:str ) -> None:
 
 def set_locale( CHROOT:str ) -> None:
     f = open( "/mnt/etc/locale.conf" , "w" )
-    f.write("LANG=en_US.UTF-8")
-    f.write('\n')
-    f.write("LALC_ADDRESS=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_IDENTIFICATION=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_MEASUREMENT=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_MONETARY=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_NAME=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_NUMERIC=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_PAPER=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_TELEPHONE=pl_PL.UTF-8")
-    f.write('\n')
-    f.write("LALC_TIME=pl_PL.UTF-8")
+    f.write("LANG=en_US.UTF-8\n")
+    f.write("LALC_ADDRESS=pl_PL.UTF-8\n")
+    f.write("LALC_IDENTIFICATION=pl_PL.UTF-8\n")
+    f.write("LALC_MEASUREMENT=pl_PL.UTF-8\n")
+    f.write("LALC_MONETARY=pl_PL.UTF-8\n")
+    f.write("LALC_NAME=pl_PL.UTF-8\n")
+    f.write("LALC_NUMERIC=pl_PL.UTF-8\n")
+    f.write("LALC_PAPER=pl_PL.UTF-8\n")
+    f.write("LALC_TELEPHONE=pl_PL.UTF-8\n")
+    f.write("LALC_TIME=pl_PL.UTF-8\n")
     f.close()
     os.system( "sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /mnt/etc/locale.gen" )
     os.system( CHROOT + " locale-gen" )
