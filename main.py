@@ -72,6 +72,12 @@ def main( args = None ) -> None:
         PASSWORD = get_password()
     else:
         PASSWORD = password
+    if path == None:
+        os.system("lsblk")
+        print("type disk where you wan to install")
+        path = str(input())
+    else:
+        pass
 
     makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
     required_packages = [ 'gptfdisk' , 'btrfts-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
