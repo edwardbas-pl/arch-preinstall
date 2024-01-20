@@ -28,6 +28,7 @@ def main( args = None ) -> None:
     hostname = None
     password = None
     profile_is_defined = None
+    profile_value = []
     CHROOT_COMMAND = "arch-chroot /mnt "
     if args != None:
         try:
@@ -54,7 +55,7 @@ def main( args = None ) -> None:
                     index = args.index(i)
                     value = args[index+1]
                     profile_is_defined = True
-                    profile_value = value
+                    profile_value.append(value)
         except IndexError:
             print("You myust provide a value to a flag")
     else:
@@ -104,7 +105,8 @@ def main( args = None ) -> None:
     elif GPU_VENDOR == "amd":
         component_list.append( "xf86-video-amdgpu" )
     elif GPU_VENDOR == "nvidia":
-        component_list.append( "nvidia" )
+        component_list.append( "nvidia-dkms" )
+        component_list.append( "nvidia-settings" )
 
     if EFI_ENABLED == True:
         component_list.append( "efibootmgr" )
@@ -147,8 +149,11 @@ def main( args = None ) -> None:
     makepkg_flags( CHROOT_COMMAND  , "/mnt/etc/makepkg.conf")
 
     if profile_is_defined == True:
-        if profile_value.lower() == "gnome":
-            install_profile( USERNAME , profile_value.lower() )
+        for i in profile_value:
+            if i.lower() == "gnome":
+                install_profile( USERNAME , profile_value.lower() )
+            elif i.lower() == "games":
+                install_profile( USERNAME , profile_value.lower() )
 
 
     os.system("clear")
