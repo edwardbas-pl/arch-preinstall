@@ -30,10 +30,10 @@ def main( args = None ) -> None:
     profile_is_defined = None
     profile_value = []
     CHROOT_COMMAND = "arch-chroot /mnt "
+    short_flags = [ '-d' , '-u' , '-h' , "-p" ]
+    flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
     if args != None:
         try:
-            short_flags = [ '-d' , '-u' , '-h' , "-p" ]
-            flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
             for i in args:
                 if i == '-d' or i == '--destination':
                     index = args.index(i)
@@ -151,15 +151,21 @@ def main( args = None ) -> None:
     if profile_is_defined == True:
         for i in profile_value:
             if i.lower() == "gnome":
-                install_profile( USERNAME , profile_value.lower() )
-            elif i.lower() == "games":
-                install_profile( USERNAME , profile_value.lower() )
-            elif i.lower() == "plasma":
-                install_profile( USERNAME , profile_value.lower() )
+                install_profile( USERNAME , i.lower() )
+            if i.lower() == "games":
+                install_profile( USERNAME , i.lower() )
+            if i.lower() == "plasma":
+                install_profile( USERNAME , i.lower() )
 
 
-    os.system("clear")
-    print("SYSTEM SCUCCESFULLY INSTALLED!")
+
+
+    if args != None:
+        if "--reboot" in flags:
+            os.system("reboot")
+        else:
+            os.system("clear")
+            print("SYSTEM SCUCCESFULLY INSTALLED!")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
