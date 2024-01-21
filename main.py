@@ -154,6 +154,8 @@ def main( args = None ) -> None:
                 install_profile( USERNAME , profile_value.lower() )
             elif i.lower() == "games":
                 install_profile( USERNAME , profile_value.lower() )
+            elif i.lower() == "plasma":
+                install_profile( USERNAME , profile_value.lower() )
 
 
     os.system("clear")
