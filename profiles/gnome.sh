@@ -15,7 +15,7 @@ sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
 
-$install ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol feh w3m alsa-firmware apulse pulseaudio-alsa alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx python-pywal pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
+$install ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx python-pywal pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
 
 gsettings set org.cinnamon.desktop.default-applications.terminal exec $TERMINAL
 
@@ -49,7 +49,7 @@ then
 	$install networkmanager network-manager-applet  tlp tp_smapi acpi_call
 fi
 $flat_install flathub com.discordapp.Discord
-clear
-sudo reboot
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
 gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
+clear
+sudo reboot
