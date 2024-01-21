@@ -3,19 +3,19 @@
 
 echo "performing postinstall script"
 git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
-install="yay -S --noconfirm "
+INSTALL="yay -S --noconfirm "
 TERMINAL="kitty"
 flat_install="flatpak install --assumeyes"
 $install $TERMINAL
 
 git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
 
-$install gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculator
+$INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculator
 sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
 
-$install ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx python-pywal pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
+$INSTALL ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx python-pywal pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
 
 gsettings set org.cinnamon.desktop.default-applications.terminal exec $TERMINAL
 
@@ -30,12 +30,12 @@ do
   # gnome-shell-extension-installer --yes ${array[$i]} $GNOME_VERSION 
 done
 
-$install gnome-shell-extension-arc-menu-git 
-$install gnome-shell-extension-dash-to-panel-git
-$install gnome-shell-extension-dash-to-vitals
-$install gnome-shell-extension-appindicator-git
-$install gnome-shell-extension-blur-my-shell
-$install gnome-shell-extension-custom-accent-colors-git
+$INSTALL gnome-shell-extension-arc-menu-git 
+$INSTALL gnome-shell-extension-dash-to-panel-git
+$INSTALL gnome-shell-extension-dash-to-vitals
+$INSTALL gnome-shell-extension-appindicator-git
+$INSTALL gnome-shell-extension-blur-my-shell
+$INSTALL gnome-shell-extension-custom-accent-colors-git
 
 sudo mkdir -p /etc/pulse/default.pa.d/
 sudo echo > /etc/pulse/default.pa.d/noise-cancellation.pa << EOF
@@ -46,7 +46,7 @@ set-default-sink echoCancel_sink
 EOF
 if [[ -f /sys/clsass/power_supply/BAT0 ]]
 then
-	$install networkmanager network-manager-applet  tlp tp_smapi acpi_call
+	$INSTALL networkmanager network-manager-applet  tlp tp_smapi acpi_call
 fi
 $flat_install flathub com.discordapp.Discord
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
