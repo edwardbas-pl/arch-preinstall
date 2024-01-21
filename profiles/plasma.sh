@@ -1,13 +1,13 @@
 #!/bin/bash
 
 git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
-install="yay -S --noconfirm "
+INSTALL="yay -S --noconfirm "
 TERMINAL="kitty"
 flat_install="flatpak install --assumeyes"
 $install $TERMINAL
 # INSTALL="sudo pacman -Sy --neded --noconfirm"
-$install ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch qbittorrent gimp playerctl code mpv dolphin libreoffice-fresh kcalc flatpak neovim nerd-fonts-complete archlinux-themes-sddm
- $INSTALL plasma-desktop plasma-settinngs sddm-kcm kitty
+$INSTALL ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch qbittorrent gimp playerctl code mpv dolphin libreoffice-fresh kcalc flatpak neovim nerd-fonts-complete archlinux-themes-sddm
+$INSTALL plasma-desktop plasma-settinngs sddm-kcm kitty
 git clonee https://github.com/wsdfhjxc/kwin-scripts.git
 cd kwin-scripts
 ln -s /run/media/$USER/     ~/Media
