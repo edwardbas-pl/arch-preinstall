@@ -26,4 +26,5 @@ then
 	$install networkmanager network-manager-applet  tlp tp_smapi acpi_call
 fi
 $flat_install flathub com.discordapp.Discord
-systemctl enable sddm
+cp /etc/skel/.bashrc $HOME
+sudo systemctl enable sddm
