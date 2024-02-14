@@ -24,6 +24,7 @@ def user_setup( CHROOT:str , username:str , password:str ) -> None:
     os.system( "echo " + username + ":" + password  + " | " + CHROOT + " chpasswd")
     # os.system( "echo 'root:" + password + "' | " + CHROOT + " chpasswd" )
     os.system( CHROOT + " usermod -aG wheel,audio,video,optical,storage " + username )
+    os.system("mkdir -p /mnt/etc/sudoers.d/")
     with open('/mnt/etc/sudoers.d/user', 'w+') as f:
         f.write('%wheel ALL=(ALL) NOPASSWD: ALL\n')
 
