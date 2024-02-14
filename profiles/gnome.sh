@@ -1,5 +1,7 @@
 #!bin/bash
-#
+
+
+
 
 echo "performing postinstall script"
 git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
@@ -15,10 +17,11 @@ sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
 
-$INSTALL ttf-symbola ttf-dejavu ttf-liberation spectacle pulseaudio pavucontrol eog w3m alsa-firmware apulse pulseaudio-alsa alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx python-pywal pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
+$INSTALL ttf-symbola ttf-dejavu ttf-liberation spectacle ttf-nerd-fonts-hack-complete-git pavucontrol eog file-roller w3m alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
+$INSTALL xdg-desktop-portal-gnome xdg-desktop-portal
 
-gsettings set org.cinnamon.desktop.default-applications.terminal exec $TERMINAL
-
+gsettings set org.cinnamon.desktop.default-applications.terminal exec "$TERMINAL"
+xdg-mime default nemo.desktop inode/directory
 
 GNOME_VERSION=$(gnome-shell --version | awk '{print $3}' | cut -d'.' -f 1)
 declare -a array=( 2890 615 1460 3193 5547 1160 1319 )
@@ -29,6 +32,19 @@ do
   string-"gnome-shell-extension-installer --yes ${array[$i]} $GNOME_VERSION"
   # gnome-shell-extension-installer --yes ${array[$i]} $GNOME_VERSION 
 done
+
+
+sudo curl https://raw.githubusercontent.com/chaotic-aur/chaotic-aur.github.io/master/mirrorlist.txt --output /etc/pacman.d/chaotic-mirrorlist
+
+
+sudo echo '
+[chaotic-aur]
+Include = /etc/pacman.d/chaotic-mirrorlist ' | sudo tee -a /etc/pacman.conf
+
+pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key 3056513887B78AEB
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' 
 
 $INSTALL gnome-shell-extension-arc-menu-git 
 $INSTALL gnome-shell-extension-dash-to-panel-git
@@ -48,8 +64,11 @@ if [[ -f /sys/clsass/power_supply/BAT0 ]]
 then
 	$INSTALL networkmanager network-manager-applet  tlp tp_smapi acpi_call
 fi
+
+
 $flat_install flathub com.discordapp.Discord
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
 gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
 clear
+
 sudo reboot
