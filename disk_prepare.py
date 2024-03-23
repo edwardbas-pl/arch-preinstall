@@ -85,12 +85,21 @@ def prepare_disks( is_efi:bool , swap_size:str , disk:str = None ) -> list:
 def set_nvme_variables( disk:str , is_efi:bool ) -> list:
     partitions_list = []
     if  is_efi == True:
-        partitions_list.append(disk + "p1")
-        partitions_list.append(disk + "p2")
-        partitions_list.append(disk + "p3")
+        if "nvme" in disk:
+            partitions_list.append(disk + "p1")
+            partitions_list.append(disk + "p2")
+            partitions_list.append(disk + "p3")
+        else:
+            partitions_list.append(disk + "1")
+            partitions_list.append(disk + "2")
+            partitions_list.append(disk + "3")
     else:
-        partitions_list.append(disk + "p1")
-        partitions_list.append(disk + "p2")
+        if "nvme" in disk:
+            partitions_list.append(disk + "p1")
+            partitions_list.append(disk + "p2")
+        else:
+            partitions_list.append(disk + "1")
+            partitions_list.append(disk + "2")
     return partitions_list
 
 
