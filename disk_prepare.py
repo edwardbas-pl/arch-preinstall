@@ -39,9 +39,11 @@ def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     os.system('swapon ' + SWAP)
 
     #mounting partitions
-    os.system("mount " + ROOT + " /mnt " )
     os.system("mkdir -p /mnt/boot")
+    os.system("mount " + ROOT + " /mnt " )
     os.system("mount " + BOOT + " /mnt/boot ")
+    os.system(lsblk)
+    input("debug")
 
 
 def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
