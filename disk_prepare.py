@@ -57,7 +57,7 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
     os.system('swapon ' + SWAP)
     os.system("mount " + ROOT + " /mnt ")
 
-
+#TODO need to meke thi to perform only one action
 def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
     partition_list = set_disk_variables(disk,is_efi)
     if len(partition_list) == 3:
@@ -66,6 +66,8 @@ def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
     elif len(partition_list) == 2:
         legacy_partitioning( disk , partition_list , swap_size )
         pass
+    print(len(partition_list))
+    input("debug")
     return partition_list
     
 
