@@ -33,7 +33,7 @@ def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     os.system('sgdisk -c 1:"ROOT" ' + ROOT)     #"ROOT" partition
 
     #formating partitions
-    os.system('mkfs.vfat -F32 ' + BOOT)
+    os.system('echo y | mkfs.vfat -F32 ' + BOOT)
     os.system('echo y | mkfs.ext4 -L "ROOT" ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
@@ -69,12 +69,6 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
 
 def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
     partition_list = set_disk_variables(disk,is_efi)
-    # if nvme_check( disk ) == True:
-    #     #print("path exist")
-    #     partition_list = set_nvme_variables( disk , is_efi )
-    #     pass
-    # else:
-    #     partition_list = set_sata_variables( disk , is_efi )
     if len(partition_list) == 3:
         efi_partitioning( disk , partition_list , swap_size )
         pass
@@ -103,15 +97,3 @@ def set_disk_variables( disk:str , is_efi:bool ) -> list:
             partitions_list.append(disk + "1")
             partitions_list.append(disk + "2")
     return partitions_list
-
-#
-# def set_sata_variables( disk:str , is_efi:bool ) -> list:
-#     partitions_list = []
-#     if is_efi == True:
-#         partitions_list.append(disk + "1")
-#         partitions_list.append(disk + "2")
-#         partitions_list.append(disk + "3")
-#     else:
-#         partitions_list.append(disk + "1")
-#         partitions_list.append(disk + "2")
-#     return partitions_list
