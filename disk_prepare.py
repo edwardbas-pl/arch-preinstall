@@ -61,10 +61,12 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
     os.system('swapon ' + SWAP)
 
     #mounting partitions
-    os.system("mount " + ROOT + " /mnt ")
+    ots.system("mount " + ROOT + " /mnt ")
+    os.system("mkdir -p /mnt/boot")
+    os.system("mount " + BOOT + " /mnt/boot ")
 
 
-def prepare_disks( is_efi:bool , swap_size:str , disk:str = None ) -> list:
+def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
     partition_list = set_disk_variables(disk,is_efi)
     # if nvme_check( disk ) == True:
     #     #print("path exist")
