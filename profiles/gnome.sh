@@ -10,7 +10,7 @@ sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
 sudo pacman-key --lsign-key 3056513887B78AEB
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
-git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
+git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin -rf
 read cos
 yay -Sy
 INSTALL="yay -S --noconfirm "
@@ -74,6 +74,8 @@ $FLAT_INSTALL flathub com.discordapp.Discord
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
 gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+
+rm gnome.sh
 clear
 
 sudo reboot
