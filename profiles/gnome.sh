@@ -17,7 +17,7 @@ TERMINAL="kitty"
 FLAT_INSTALL="flatpak install --assumeyes"
 $INSTALL $TERMINAL
 
-git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
+git clone https://github.com/edwardbas-pl/backup && cd backup && git clone https://github.com/edwardbas-pl/Wallpapers backgrounds &&sh Restore && cd ..
 
 $INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculatoreog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator  #gui apps
 $INSTALL xdg-desktop-portal-gnome 
