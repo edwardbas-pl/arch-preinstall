@@ -4,7 +4,7 @@ echo "performing postinstall script"
 sudo echo '
 [chaotic-aur]
 Include = /etc/pacman.d/chaotic-mirrorlist ' | sudo tee -a /etc/pacman.conf
-
+sudo curl https://aur.chaotic.cx/mirrorlist.txt -o /etc/pacman.d/chaotic-mirrorlist
 sudo pacman-key --init
 sudo pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
 sudo pacman-key --lsign-key 3056513887B78AEB
