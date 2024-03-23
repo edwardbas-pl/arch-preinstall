@@ -82,6 +82,7 @@ def main( args = None ) -> None:
         PASSWORD = password
 
     required_packages = [ 'gptfdisk' , 'btrfts-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
+    pararell_download("/etc/pacman.conf")
 
     #installing packges requierd for performing installation
     os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
@@ -153,7 +154,7 @@ def main( args = None ) -> None:
         pass
     
     makepkg_flags( CHROOT_COMMAND  , "/mnt/etc/makepkg.conf")
-
+    pararell_download("/mnt/etc/pacman.conf")
     if profile_is_defined == True:
         for i in profile_value:
             if i.lower() == "gnome":
