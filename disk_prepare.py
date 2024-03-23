@@ -4,7 +4,7 @@ def list_disk() -> None:
     os.system('lsblk --nodeps')
     
 
-def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
+def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> int:
     BOOT = PARTITION_LIST[0]
     ROOT = PARTITION_LIST[1]
     SWAP = PARTITION_LIST[2]
@@ -34,8 +34,10 @@ def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
 
     #mounting partitions
     os.system("mkdir -p /mnt/boot")
+    input("mount debug")
     os.system("mount " + ROOT + " /mnt " )
     os.system("mount " + BOOT + " /mnt/boot ")
+
 
 
 def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
