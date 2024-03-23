@@ -57,11 +57,10 @@ $INSTALL gnome-shell-extension-blur-my-shell
 $INSTALL gnome-shell-extension-custom-accent-colors-git
 
 sudo mkdir -p /etc/pulse/default.pa.d/
-sudo echo > /etc/pulse/default.pa.d/noise-cancellation.pa << EOF
 ### Enable Echo/Noise-Cancellation
-load-module module-echo-cancel use_master_format=1 aec_method=webrtc aec_args="analog_gain_control=0\ digital_gain_control=1" source_name=echoCancel_source sink_name=echoCancel_sink
-set-default-source echoCancel_source
-set-default-sink echoCancel_sink
+sudo echo 'load-module module-echo-cancel use_master_format=1 aec_method=webrtc aec_args="analog_gain_control=0\ digital_gain_control=1" source_name=echoCancel_source sink_name=echoCancel_sink' > /etc/pulse/default.pa.d/noise-cancellation.pa
+sudo echo 'set-default-source echoCancel_source' >> /etc/pulse/default.pa.d/noise-cancellation.pa
+sudo echo 'set-default-sink echoCancel_sink' >> /etc/pulse/default.pa.d/noise-cancellation.pa
 EOF
 if [[ -f /sys/clsass/power_supply/BAT0 ]]
 then
