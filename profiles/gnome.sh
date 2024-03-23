@@ -1,14 +1,20 @@
 #!bin/bash
 
-
-
-
 echo "performing postinstall script"
+sudo echo '
+[chaotic-aur]
+Include = /etc/pacman.d/chaotic-mirrorlist ' | sudo tee -a /etc/pacman.conf
+
+pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
+pacman-key --lsign-key 3056513887B78AEB
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
+pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' 
 git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
+
 INSTALL="yay -S --noconfirm "
 TERMINAL="kitty"
-flat_install="flatpak install --assumeyes"
-$install $TERMINAL
+FLAT_INSTALL="flatpak install --assumeyes"
+$INSTALL $TERMINAL
 
 git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
 
@@ -41,16 +47,6 @@ done
 
 sudo curl https://raw.githubusercontent.com/chaotic-aur/chaotic-aur.github.io/master/mirrorlist.txt --output /etc/pacman.d/chaotic-mirrorlist
 
-
-sudo echo '
-[chaotic-aur]
-Include = /etc/pacman.d/chaotic-mirrorlist ' | sudo tee -a /etc/pacman.conf
-
-pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com
-pacman-key --lsign-key 3056513887B78AEB
-pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst'
-pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' 
-
 $INSTALL gnome-shell-extension-arc-menu-git 
 $INSTALL gnome-shell-extension-dash-to-panel-git
 $INSTALL gnome-shell-extension-dash-to-vitals
@@ -71,7 +67,7 @@ then
 fi
 
 
-$flat_install flathub com.discordapp.Discord
+$FLAT_INSTALL flathub com.discordapp.Discord
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
 gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
 clear
