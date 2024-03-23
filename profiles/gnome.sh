@@ -11,7 +11,8 @@ sudo pacman-key --lsign-key 3056513887B78AEB
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' --noconfirm
 sudo pacman -U 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' --noconfirm
 git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm && cd .. && rm yay-bin
-
+read cos
+yay -Sy
 INSTALL="yay -S --noconfirm "
 TERMINAL="kitty"
 FLAT_INSTALL="flatpak install --assumeyes"
@@ -19,7 +20,9 @@ $INSTALL $TERMINAL
 
 git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
 
-$INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculatoreog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator xdg-desktop-portal-gnome xdg-desktop-portal #gui apps
+$INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculatoreog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator  #gui apps
+$INSTALL xdg-desktop-portal-gnome 
+$INSTALL xdg-desktop-portal
 sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
@@ -70,6 +73,7 @@ fi
 $FLAT_INSTALL flathub com.discordapp.Discord
 gsettings set org.gnome.shell.keybindings show-screenshot-ui "['<Shift><Super>s']"
 gsettings set org.gnome.shell.keybindings toogle-overview "['<Super><Tab>']"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 clear
 
 sudo reboot
