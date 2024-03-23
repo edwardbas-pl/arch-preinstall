@@ -3,12 +3,6 @@ import os
 def list_disk() -> None:
     os.system('lsblk --nodeps')
     
-def nvme_check( path:str ) -> bool:
-    if "nvme" or "mmcblk" in path:
-        return True
-    else:
-        return False
-
 
 def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     BOOT = PARTITION_LIST[0]
