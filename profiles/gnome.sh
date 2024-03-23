@@ -18,7 +18,7 @@ $INSTALL $TERMINAL
 
 git clone https://github.com/edwardbas-pl/backup && cd backup && sh Restore && cd ..
 
-$INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculator
+$INSTALL gnome-shell gnome-tweaks gnome-control-center gdm gnome-shell-extension-installer gnome-calculatoreog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator xdg-desktop-portal-gnome xdg-desktop-portal #gui apps
 sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
@@ -26,7 +26,6 @@ ln -s /run/media/$USER/     ~/Media
 # Unused packages
 # playerctl
 
-$INSTALL eog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator xdg-desktop-portal-gnome xdg-desktop-portal
 $INSTALL ttf-symbola ttf-dejavu ttf-liberation nerd-fonts #fonts
 $INSTALL w3m nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch flatpak neovim xorg-xkill xorg-xinit #terminal utilities
 $INSTALL pavucontrol alsa-oss
