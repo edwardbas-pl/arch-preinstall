@@ -61,6 +61,8 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
 def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
     partition_list = set_disk_variables(disk,is_efi)
     if len(partition_list) == 3:
+        print(len(partition_list))
+        input("EFI pARTITION SCHEME")
         efi_partitioning( disk , partition_list , swap_size )
         pass
     elif len(partition_list) == 2:
