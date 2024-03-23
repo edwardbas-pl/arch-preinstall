@@ -82,6 +82,7 @@ def main( args = None ) -> None:
         PASSWORD = password
 
     required_packages = [ 'gptfdisk' , 'btrfts-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
+    required_packages = [ 'gptfdisk' , 'dialog' , 'laptop-detect' , 'relector' ]
     pararell_download("/etc/pacman.conf")
 
     #installing packges requierd for performing installation
