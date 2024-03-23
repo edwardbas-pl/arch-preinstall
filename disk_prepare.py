@@ -51,14 +51,11 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
 
     #formating partitions
     os.system('echo y | mkfs.ext4 ' + ROOT)
-    os.system('echo y | mkfs.vfat -F32 ' + BOOT)
     os.system('mkswap ' + SWAP)
 
     #mounting partitions
     os.system('swapon ' + SWAP)
-    ots.system("mount " + ROOT + " /mnt ")
-    os.system("mkdir -p /mnt/boot")
-    os.system("mount " + BOOT + " /mnt/boot ")
+    os.system("mount " + ROOT + " /mnt ")
 
 
 def prepare_disks( is_efi:bool , swap_size:str , disk:str ) -> list:
