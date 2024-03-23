@@ -22,6 +22,13 @@ def mirror_refresh() -> None:
     os.system("cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old")
     os.system("pareflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist")
 
+def pararell_download(path:str) -> int:
+    nc = multiprocessing.cpu_count()
+    source_string = "#ParallelDownloads = 5"
+    changed_string = "ParallelDownloads = " + str(nc)
+    os.system( "sed -i 's/"+source_string+"/"+changed_string+"/g' " + path )
+    return 1
+
 def main( args = None ) -> None:
     path = None
     username = None
@@ -74,7 +81,6 @@ def main( args = None ) -> None:
     else:
         PASSWORD = password
 
-    makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
     required_packages = [ 'gptfdisk' , 'btrfts-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
 
     #installing packges requierd for performing installation
@@ -156,9 +162,6 @@ def main( args = None ) -> None:
                 install_profile( USERNAME , i.lower() )
             if i.lower() == "plasma":
                 install_profile( USERNAME , i.lower() )
-
-
-
 
     if args != None:
         if "--reboot" in flags:
