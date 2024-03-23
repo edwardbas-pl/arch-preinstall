@@ -27,7 +27,7 @@ def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None:
     os.system('sgdisk -c 1:"ROOT" ' + ROOT)     #"ROOT" partition
 
     #formating partitions
-    os.system('echo y | mkfs.vfat -F32 ' + BOOT)
+    os.system('mkfs.vfat -F32 ' + BOOT)
     os.system('echo y | mkfs.ext4 -L "ROOT" ' + ROOT)
     os.system('mkswap ' + SWAP)
     os.system('swapon ' + SWAP)
