@@ -17,8 +17,13 @@ sudo systemctl enable gdm
 
 ln -s /run/media/$USER/     ~/Media
 
-$INSTALL ttf-symbola ttf-dejavu ttf-liberation spectacle ttf-nerd-fonts-hack-complete-git pavucontrol eog file-roller w3m alsa-oss nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch qbittorrent gimp playerctl code mpv nautilus nemo libreoffice-fresh galculator flatpak neovim nerd-fonts-complete
-$INSTALL xdg-desktop-portal-gnome xdg-desktop-portal
+# Unused packages
+# playerctl
+
+$INSTALL eog file-roller qbittorrent gimp  code mpv nemo libreoffice-fresh gnome-calculator xdg-desktop-portal-gnome xdg-desktop-portal
+$INSTALL ttf-symbola ttf-dejavu ttf-liberation nerd-fonts #fonts
+$INSTALL w3m nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch flatpak neovim xorg-xkill xorg-xinit #terminal utilities
+$INSTALL pavucontrol alsa-oss
 
 gsettings set org.cinnamon.desktop.default-applications.terminal exec "$TERMINAL"
 xdg-mime default nemo.desktop inode/directory
