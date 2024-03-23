@@ -65,12 +65,13 @@ def legacy_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> None
 
 
 def prepare_disks( is_efi:bool , swap_size:str , disk:str = None ) -> list:
-    if nvme_check( disk ) == True:
-        #print("path exist")
-        partition_list = set_nvme_variables( disk , is_efi )
-        pass
-    else:
-        partition_list = set_sata_variables( disk , is_efi )
+    partition_list = set_disk_variables(disk,is_efi)
+    # if nvme_check( disk ) == True:
+    #     #print("path exist")
+    #     partition_list = set_nvme_variables( disk , is_efi )
+    #     pass
+    # else:
+    #     partition_list = set_sata_variables( disk , is_efi )
     if len(partition_list) == 3:
         efi_partitioning( disk , partition_list , swap_size )
         pass
@@ -80,7 +81,7 @@ def prepare_disks( is_efi:bool , swap_size:str , disk:str = None ) -> list:
     return partition_list
     
 
-def set_nvme_variables( disk:str , is_efi:bool ) -> list:
+def set_disk_variables( disk:str , is_efi:bool ) -> list:
     partitions_list = []
     if  is_efi == True:
         if "nvme" in disk:
@@ -100,14 +101,14 @@ def set_nvme_variables( disk:str , is_efi:bool ) -> list:
             partitions_list.append(disk + "2")
     return partitions_list
 
-
-def set_sata_variables( disk:str , is_efi:bool ) -> list:
-    partitions_list = []
-    if is_efi == True:
-        partitions_list.append(disk + "1")
-        partitions_list.append(disk + "2")
-        partitions_list.append(disk + "3")
-    else:
-        partitions_list.append(disk + "1")
-        partitions_list.append(disk + "2")
-    return partitions_list
+#
+# def set_sata_variables( disk:str , is_efi:bool ) -> list:
+#     partitions_list = []
+#     if is_efi == True:
+#         partitions_list.append(disk + "1")
+#         partitions_list.append(disk + "2")
+#         partitions_list.append(disk + "3")
+#     else:
+#         partitions_list.append(disk + "1")
+#         partitions_list.append(disk + "2")
+#     return partitions_list
