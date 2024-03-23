@@ -8,5 +8,5 @@ def install_profile( username , profile ) -> None:
     dest = "/mnt/home/" + username + '/' 
     shutil.copy2( src , dest )
     f = open( "/mnt/home/"+username+"/.bashrc" , 'a' )
-    f.write("sh ~/"+profile)
+    f.write("sh ~/"+profile+".sh")
     f.close()
