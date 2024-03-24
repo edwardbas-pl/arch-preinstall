@@ -22,17 +22,25 @@ def mirror_refresh() -> None:
     os.system("cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.old")
     os.system("pareflector --verbose --latest 20 --sort rate --save /etc/pacman.d/mirrorlist")
 
+def pararell_download(path:str) -> int:
+    nc = multiprocessing.cpu_count()
+    source_string = "#ParallelDownloads = 5"
+    changed_string = "ParallelDownloads = " + str(nc)
+    os.system( "sed -i 's/"+source_string+"/"+changed_string+"/g' " + path )
+    return 1
+
 def main( args = None ) -> None:
     path = None
     username = None
     hostname = None
     password = None
     profile_is_defined = None
+    profile_value = []
     CHROOT_COMMAND = "arch-chroot /mnt "
+    short_flags = [ '-d' , '-u' , '-h' , "-p" ]
+    flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
     if args != None:
         try:
-            short_flags = [ '-d' , '-u' , '-h' , "-p" ]
-            flags = [ '--destination' , '--user' , '--hostname' , '--password' ]
             for i in args:
                 if i == '-d' or i == '--destination':
                     index = args.index(i)
@@ -54,7 +62,7 @@ def main( args = None ) -> None:
                     index = args.index(i)
                     value = args[index+1]
                     profile_is_defined = True
-                    profile_value = value
+                    profile_value.append(value)
         except IndexError:
             print("You myust provide a value to a flag")
     else:
@@ -79,8 +87,9 @@ def main( args = None ) -> None:
     else:
         pass
 
-    makepkg_flags( CHROOT_COMMAND  , "/etc/makepkg.conf")
     required_packages = [ 'gptfdisk' , 'btrfts-progs' , 'dialog' , 'laptop-detect' , 'relector' ]
+    required_packages = [ 'gptfdisk' , 'dialog' , 'laptop-detect' , 'relector' ]
+    pararell_download("/etc/pacman.conf")
 
     #installing packges requierd for performing installation
     os.system("pacman -Sy --noconfirm " + ' '.join(required_packages))
@@ -110,7 +119,8 @@ def main( args = None ) -> None:
     elif GPU_VENDOR == "amd":
         component_list.append( "xf86-video-amdgpu" )
     elif GPU_VENDOR == "nvidia":
-        component_list.append( "nvidia" )
+        component_list.append( "nvidia-dkms" )
+        component_list.append( "nvidia-settings" )
 
     if EFI_ENABLED == True:
         component_list.append( "efibootmgr" )
@@ -151,14 +161,22 @@ def main( args = None ) -> None:
         pass
     
     makepkg_flags( CHROOT_COMMAND  , "/mnt/etc/makepkg.conf")
-
+    pararell_download("/mnt/etc/pacman.conf")
     if profile_is_defined == True:
-        if profile_value.lower() == "gnome":
-            install_profile( USERNAME , profile_value.lower() )
+        for i in profile_value:
+            if i.lower() == "gnome":
+                install_profile( USERNAME , i.lower() )
+            if i.lower() == "games":
+                install_profile( USERNAME , i.lower() )
+            if i.lower() == "plasma":
+                install_profile( USERNAME , i.lower() )
 
-
-    os.system("clear")
-    print("SYSTEM SCUCCESFULLY INSTALLED!")
+    if args != None:
+        if "--reboot" in flags:
+            os.system("reboot")
+        else:
+            os.system("clear")
+            print("SYSTEM SCUCCESFULLY INSTALLED!")
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
