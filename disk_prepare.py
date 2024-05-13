@@ -36,6 +36,7 @@ def efi_partitioning( DISK:str , PARTITION_LIST:str , swap_size:str ) -> int:
     os.system("mount " + ROOT + " /mnt " )
     os.system("mkdir -p /mnt/boot")
     os.system("mount " + BOOT + " /mnt/boot ")
+    return 1
 
 
 
