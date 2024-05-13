@@ -30,7 +30,7 @@ ln -s /run/media/$USER/     ~/Media
 # playerctl
 
 $INSTALL ttf-symbola ttf-dejavu ttf-liberation nerd-fonts #fonts
-$INSTALL w3m nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch flatpak neovim xorg-xkill xorg-xinit #terminal utilities
+$INSTALL w3m nodejs git rar dialog ranger btop gtop htop vim udisks2 autofs numlockx pfetch flatpak neovim xorg-xkill xorg-xinit wl-clipboard xclip #terminal utilities
 $INSTALL pavucontrol alsa-oss
 
 gsettings set org.cinnamon.desktop.default-applications.terminal exec "$TERMINAL"
